@@ -220,6 +220,95 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ OVERVIEW PAGE ════════════════════════════════════════════════ -->
 <div class="page active" id="page-overview">
+  <!-- C6-U: Stockout Forecast -->
+  <div class="card" id="c6-u-card" style="margin-bottom:14px;border-left:4px solid var(--red)">
+    <div class="card-hdr">
+      <span class="card-title">🔮 Stockout Forecast · Days-to-OOS Projection</span>
+      <span class="card-sub" id="c6-u-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      Linear extrapolation of 30d DRR. Tiers shown below; <strong>projected_lost_gmv</strong> = 7-day window lost if OOS triggers.
+    </div>
+    <div class="stat-grid" id="c6-u-kpis" style="padding:12px"></div>
+
+    <div class="card-hdr" style="margin-top:14px">
+      <span class="card-title" style="font-size:13px">🚨 Critical Alerts · Top 30 by GMV at Risk</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th style="min-width:280px">SKU</th>
+        <th>Brand</th>
+        <th style="text-align:right">Inv Qty</th>
+        <th style="text-align:right">DRR</th>
+        <th style="text-align:right">Days to OOS</th>
+        <th>Urgency</th>
+        <th style="text-align:right">7d GMV at Risk</th>
+      </tr></thead>
+      <tbody id="c6-u-alerts-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- C4: NTB FUNNEL + CATEGORIES -->
+  <div class="card" id="c4-ntb-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🎯 NTB Funnel · Acquisition Efficiency</span>
+      <span class="card-sub" id="c4-ntb-sub"></span>
+    </div>
+    <div class="stat-grid" id="c4-ntb-kpis" style="padding:12px"></div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Brand</th>
+        <th style="text-align:right">Impressions</th>
+        <th style="text-align:right">Orders</th>
+        <th style="text-align:right">CVR</th>
+        <th style="text-align:right">NTB Buyers</th>
+        <th style="text-align:right">NTB %</th>
+        <th style="text-align:right">Repeat (est)</th>
+        <th style="text-align:right">Ad Spend</th>
+        <th style="text-align:right">CAC ₹/NTB</th>
+        <th style="text-align:right">Units</th>
+        <th style="text-align:right">Units/Order</th>
+        <th style="text-align:right">₹/Order</th>
+      </tr></thead>
+      <tbody id="c4-ntb-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c4-cat-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📂 Category Concentration · per Brand</span>
+      <span class="card-sub" id="c4-cat-sub"></span>
+    </div>
+    <div id="c4-cat-body" style="padding:8px 14px"></div>
+    <div style="padding:8px 14px 12px;font-size:11px;color:var(--text2)">
+      <strong>HHI</strong> (Herfindahl-Hirschman Index) = sum of squared category shares.
+      &lt;1500 = balanced · 1500-2500 = moderate · &gt;2500 = highly concentrated (risk: over-reliance on one category)
+    </div>
+  </div>
+
+  <div class="card" id="c4-cross-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🔀 Category × Brand Cross-View</span>
+      <span class="card-sub" id="c4-cross-sub"></span>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Category</th>
+        <th style="text-align:right">Total Units</th>
+        <th>Brand Split</th>
+        <th>Dominant Brand</th>
+        <th style="text-align:right">Dominance</th>
+      </tr></thead>
+      <tbody id="c4-cross-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="ov-brand-all" onclick="setOvBrand('ALL',this)">All</button>
@@ -376,6 +465,84 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ SALES PAGE ═══════════════════════════════════════════════════ -->
 <div class="page" id="page-sales">
+  <!-- C6-V: Cannibalization -->
+  <div class="card" id="c6-v-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🔬 SKU Cannibalization · Same-Day Correlation</span>
+      <span class="card-sub" id="c6-v-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      Pearson correlation on daily units across SKU pairs. <strong style="color:var(--red)">ρ &lt; -0.4</strong> = cannibals (substitutes);
+      <strong style="color:var(--green)">ρ &gt; +0.5</strong> = complements (potential bundle).
+    </div>
+    <div class="stat-grid" id="c6-v-kpis" style="padding:12px"></div>
+
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr;padding:0 12px 12px;gap:12px">
+      <div>
+        <div style="font-size:11px;color:var(--red);margin-bottom:6px"><strong>🔻 TOP CANNIBALS (ρ &lt; -0.4)</strong></div>
+        <table style="font-size:11px">
+          <thead><tr>
+            <th>SKU A</th><th>SKU B</th><th style="text-align:right">ρ</th>
+          </tr></thead>
+          <tbody id="c6-v-cannibals-tbody"></tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--green);margin-bottom:6px"><strong>🔗 TOP COMPLEMENTS (ρ &gt; +0.5)</strong></div>
+        <table style="font-size:11px">
+          <thead><tr>
+            <th>SKU A</th><th>SKU B</th><th style="text-align:right">ρ</th>
+          </tr></thead>
+          <tbody id="c6-v-complements-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card-hdr">
+      <span class="card-title" style="font-size:13px">📋 Per-SKU Top Cannibals (drill-down)</span>
+    </div>
+    <div id="c6-v-drill-body" style="padding:8px 14px"></div>
+  </div>
+
+  <!-- C6-W: Discount Elasticity -->
+  <div class="card" id="c6-w-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📈 Discount Elasticity · Lift per % Discount</span>
+      <span class="card-sub" id="c6-w-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      Bucket-based estimation: how many extra units does each % of discount drive?
+      Higher coefficient = more elastic (price-sensitive).
+    </div>
+    <div class="stat-grid" id="c6-w-kpis" style="padding:12px"></div>
+
+    <div class="card-hdr" style="margin-top:8px">
+      <span class="card-title" style="font-size:13px">🔬 Per-Brand Discount-Bucket Performance</span>
+    </div>
+    <div id="c6-w-brand-body" style="padding:8px 14px"></div>
+
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr;padding:0 12px 12px;gap:12px">
+      <div>
+        <div style="font-size:11px;color:var(--green);margin-bottom:6px"><strong>🌟 MOST ELASTIC SKUs · Discount Drives Most Lift</strong></div>
+        <table style="font-size:11px">
+          <thead><tr>
+            <th>SKU</th><th>Brand</th><th style="text-align:right">Lift/%</th>
+          </tr></thead>
+          <tbody id="c6-w-elastic-tbody"></tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--orange);margin-bottom:6px"><strong>🛑 LEAST ELASTIC SKUs · Discount Wasted</strong></div>
+        <table style="font-size:11px">
+          <thead><tr>
+            <th>SKU</th><th>Brand</th><th style="text-align:right">Lift/%</th>
+          </tr></thead>
+          <tbody id="c6-w-inelastic-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="sales-brand-all" onclick="setSalesBrand('ALL',this)">All</button>
@@ -525,6 +692,116 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ POs PAGE ═════════════════════════════════════════════════════ -->
 <div class="page" id="page-pos">
+  <!-- C5-Q: PO Type Breakdown -->
+  <div class="card" id="c5-q-card" style="margin-bottom:14px;border-left:4px solid var(--orange)">
+    <div class="card-hdr">
+      <span class="card-title">🚨 PO Type Breakdown · Emergency vs Strategic</span>
+      <span class="card-sub" id="c5-q-sub"></span>
+    </div>
+    <div class="stat-grid" id="c5-q-kpis" style="padding:12px"></div>
+    <div style="padding:0 12px 12px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px">
+        <strong>Emergency POs</strong> (is_low_stock_po flag) are reactive replenishment vs. strategic planned orders.
+        High emergency share = reactive supply chain.
+      </div>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Business Type</th>
+        <th style="text-align:right">POs</th>
+        <th style="text-align:right">Value</th>
+        <th style="text-align:right">Units</th>
+        <th style="text-align:right">Emergency</th>
+        <th style="text-align:right">Strategic</th>
+        <th style="text-align:right">Emergency %</th>
+      </tr></thead>
+      <tbody id="c5-q-bt-tbody"></tbody>
+    </table>
+    </div>
+    <div class="card-hdr" style="margin-top:8px">
+      <span class="card-title" style="font-size:13px">Per-Facility · Emergency vs Strategic</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Facility</th>
+        <th style="text-align:right">Total POs</th>
+        <th style="text-align:right">Emergency</th>
+        <th style="text-align:right">Strategic</th>
+        <th style="text-align:right">Emergency %</th>
+        <th style="text-align:right">Emergency ₹</th>
+        <th style="text-align:right">Strategic ₹</th>
+      </tr></thead>
+      <tbody id="c5-q-fc-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- C2: PO AGING + LEAD TIME (injected) -->
+  <div class="card" id="c2-pos-aging-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">⏳ PO Aging & Lead Time</span>
+      <span class="card-sub" id="c2-pos-aging-sub"></span>
+    </div>
+    <div class="stat-grid" id="c2-pos-aging-kpis" style="padding:12px"></div>
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr;padding:0 12px 12px">
+      <div class="chart-card">
+        <div class="chart-title">Active POs by Age</div>
+        <div style="position:relative;height:240px"><canvas id="c2-pos-aging-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Completed POs · Lead Time Distribution</div>
+        <div style="position:relative;height:240px"><canvas id="c2-pos-leadtime-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="c2-pos-fc-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🏭 PO Performance by Facility</span>
+      <span class="card-sub" id="c2-pos-fc-count"></span>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Facility</th>
+        <th style="text-align:right">POs</th>
+        <th style="text-align:right">Value</th>
+        <th style="text-align:right">Done</th>
+        <th style="text-align:right">Overdue</th>
+        <th style="text-align:right">Avg Lead</th>
+        <th style="text-align:right">Avg Age</th>
+        <th style="text-align:right">Fill Rate</th>
+        <th style="text-align:right">Low-Stock</th>
+      </tr></thead>
+      <tbody id="c2-pos-fc-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c2-pos-overdue-card" style="margin-bottom:14px;border-left:4px solid var(--red)">
+    <div class="card-hdr">
+      <span class="card-title">🚨 Overdue POs · Past Appointment Date</span>
+      <span class="card-sub" id="c2-pos-overdue-count"></span>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>PO #</th>
+        <th>Facility</th>
+        <th style="text-align:right">Order Date</th>
+        <th style="text-align:right">Appt Date</th>
+        <th style="text-align:right">Age (d)</th>
+        <th style="text-align:right">Pending Units</th>
+        <th style="text-align:right">Fill %</th>
+        <th style="text-align:right">Value</th>
+      </tr></thead>
+      <tbody id="c2-pos-overdue-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="pos-brand-all" onclick="setPosBrand('ALL',this)">All</button>
@@ -728,6 +1005,74 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ STOCK PAGE ═══════════════════════════════════════════════════ -->
 <div class="page" id="page-stock">
+  <!-- C5-R: FC-level DoC -->
+  <div class="card" id="c5-r-card" style="margin-bottom:14px;border-left:4px solid var(--red)">
+    <div class="card-hdr">
+      <span class="card-title">🎯 FC-Level Days-of-Cover · Granular OOS Risk</span>
+      <span class="card-sub" id="c5-r-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      Per (SKU × Facility) DoC instead of city-level aggregates — surfaces FC-specific
+      OOS risks masked by averages.
+    </div>
+    <div class="stat-grid" id="c5-r-kpis" style="padding:12px"></div>
+
+    <div class="card-hdr" style="margin-top:14px">
+      <span class="card-title" style="font-size:13px">🚨 FC Critical Alerts · SKUs with DoC &lt; 7 days</span>
+    </div>
+    <div id="c5-r-alerts-body" style="padding:8px 14px"></div>
+
+    <div class="card-hdr">
+      <span class="card-title" style="font-size:13px">🔴 Worst 50 (SKU × FC) Combinations</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>SKU</th>
+        <th>Brand</th>
+        <th>Facility</th>
+        <th>City</th>
+        <th style="text-align:right">SOH Qty</th>
+        <th style="text-align:right">DRR</th>
+        <th style="text-align:right">DoC (days)</th>
+        <th>Band</th>
+      </tr></thead>
+      <tbody id="c5-r-worst-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- C2: REPLENISHMENT + BACKEND/FRONTEND (injected) -->
+  <div class="card" id="c2-replenish-card" style="margin-bottom:14px;border-left:4px solid var(--orange)">
+    <div class="card-hdr">
+      <span class="card-title">🔄 Replenishment Action List · per Facility</span>
+      <span class="card-sub" id="c2-replenish-sub"></span>
+    </div>
+    <div id="c2-replenish-body" style="padding:8px 14px"></div>
+  </div>
+
+  <div class="card" id="c2-bf-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📥 Backend vs Frontend Inventory</span>
+      <span class="card-sub" id="c2-bf-sub"></span>
+    </div>
+    <div class="stat-grid" id="c2-bf-kpis" style="padding:12px"></div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th style="min-width:280px">Product</th>
+        <th>Brand</th>
+        <th style="text-align:right">Backend Qty</th>
+        <th style="text-align:right">Frontend Qty</th>
+        <th style="text-align:right">Total</th>
+        <th style="text-align:right">Backend %</th>
+        <th style="text-align:right">Frontend %</th>
+      </tr></thead>
+      <tbody id="c2-bf-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="stock-brand-all" onclick="setStockBrand('ALL',this)">All</button>
@@ -857,6 +1202,53 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ DoC PAGE ═════════════════════════════════════════════════════ -->
 <div class="page" id="page-doc">
+  <!-- C2: DOC DISTRIBUTION + SCATTER (injected) -->
+  <div class="card" id="c2-doc-dist-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📊 Days-of-Cover Distribution</span>
+      <span class="card-sub" id="c2-doc-dist-sub"></span>
+    </div>
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr;padding:0 12px 12px">
+      <div class="chart-card">
+        <div class="chart-title">SKUs by DoC Band</div>
+        <div style="position:relative;height:280px"><canvas id="c2-doc-dist-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">₹ Revenue at Risk by Band (30d GMV)</div>
+        <div style="position:relative;height:280px"><canvas id="c2-doc-gmv-chart"></canvas></div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Band</th>
+        <th style="text-align:right">SKUs</th>
+        <th style="text-align:right">Inv Qty</th>
+        <th style="text-align:right">Units 30d</th>
+        <th style="text-align:right">GMV 30d</th>
+        <th>Top SKUs in band</th>
+      </tr></thead>
+      <tbody id="c2-doc-dist-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c2-scatter-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🎯 Stock × DRR Scatter · OOS Risk vs Overstock</span>
+      <span class="card-sub" id="c2-scatter-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:11px;color:var(--text2)">
+      X-axis: DRR (units/day) · Y-axis: DoC (days) · Bubble size: 30d GMV · Color: Brand<br>
+      <strong>Top-left</strong> = low DRR, high DoC (dead stock) · 
+      <strong>Bottom-right</strong> = high DRR, low DoC (OOS risk) · 
+      <strong>Center-right</strong> = healthy
+    </div>
+    <div style="position:relative;height:480px;padding:0 12px 12px">
+      <canvas id="c2-drr-scatter-chart"></canvas>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="doc-brand-all" onclick="setDocBrand('ALL',this)">All</button>
@@ -1001,6 +1393,88 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ CITIES PAGE ══════════════════════════════════════════════════ -->
 <div class="page" id="page-cities">
+  <!-- C6-X: Geo Pricing Compliance -->
+  <div class="card" id="c6-x-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📍 Geo Pricing Compliance · Per-City Per-Unit Price</span>
+      <span class="card-sub" id="c6-x-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      Compares each city's <strong>per-unit GMV</strong> (revenue/units) against the network median.
+      Deviations &gt;15% flag pricing or SKU-mix outliers.
+    </div>
+    <div class="stat-grid" id="c6-x-kpis" style="padding:12px"></div>
+
+    <div class="card-hdr" style="margin-top:14px">
+      <span class="card-title" style="font-size:13px">⚠️ Outliers · Cities Deviating &gt;15% from Network Median</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>City</th>
+        <th>Month</th>
+        <th style="text-align:right">Units</th>
+        <th style="text-align:right">GMV</th>
+        <th style="text-align:right">₹/unit</th>
+        <th style="text-align:right">Deviation</th>
+        <th>Status</th>
+      </tr></thead>
+      <tbody id="c6-x-outliers-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- C4-M: NTB × CITY × BRAND HEATMAP -->
+  <div class="card" id="c4-geo-summary-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🌍 NTB Geographic Distribution · 30d</span>
+      <span class="card-sub" id="c4-geo-sub"></span>
+    </div>
+    <div class="stat-grid" id="c4-geo-kpis" style="padding:12px"></div>
+  </div>
+
+  <div class="card" id="c4-geo-topcombo-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🏆 Top 30 NTB Combinations · (City × Brand)</span>
+      <span class="card-sub" id="c4-geo-topcombo-sub"></span>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>City</th>
+        <th>Brand</th>
+        <th style="text-align:right">NTB</th>
+        <th style="text-align:right">Orders</th>
+        <th style="text-align:right">Impressions</th>
+        <th style="text-align:right">NTB Rate %</th>
+        <th style="text-align:right">CVR %</th>
+      </tr></thead>
+      <tbody id="c4-geo-topcombo-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c4-geo-bybrand-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📍 Per-Brand Geographic Concentration</span>
+      <span class="card-sub" id="c4-geo-bybrand-sub"></span>
+    </div>
+    <div id="c4-geo-bybrand-body" style="padding:8px 14px"></div>
+  </div>
+
+  <div class="card" id="c4-geo-heatmap-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🔥 Heatmap · Top 30 Cities × Brand · NTB</span>
+      <span class="card-sub" id="c4-geo-heatmap-sub"></span>
+    </div>
+    <div style="overflow-x:auto;padding:8px 14px 12px">
+    <table id="c4-geo-heatmap-table" style="font-size:12px;border-collapse:collapse">
+      <thead id="c4-geo-heatmap-thead"></thead>
+      <tbody id="c4-geo-heatmap-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="cities-brand-all" onclick="setCitiesBrand('ALL',this)">All</button>
@@ -1102,6 +1576,83 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ ADS PAGE ═════════════════════════════════════════════════════ -->
 <div class="page" id="page-ads">
+  <!-- C3-H: 14-day attribution window -->
+  <div class="card" id="c3-attr-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📅 7d vs 14d Attribution Window</span>
+      <span class="card-sub" id="c3-attr-sub"></span>
+    </div>
+    <div class="stat-grid" id="c3-attr-kpis" style="padding:12px"></div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Campaign</th>
+        <th>Brand</th>
+        <th style="text-align:right">Spend</th>
+        <th style="text-align:right">Total Sales</th>
+        <th style="text-align:right">GMV 7d</th>
+        <th style="text-align:right">GMV 14d</th>
+        <th style="text-align:right">Lag ₹</th>
+        <th style="text-align:right">Lag %</th>
+        <th style="text-align:right">ROAS 7d</th>
+        <th style="text-align:right">ROAS 14d</th>
+      </tr></thead>
+      <tbody id="c3-attr-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- C3-T: Campaign WoW movers -->
+  <div class="card" id="c3-ts-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📈 Campaign-Level WoW Movers</span>
+      <span class="card-sub" id="c3-ts-sub"></span>
+    </div>
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr;padding:12px;gap:12px">
+      <div>
+        <div style="font-size:11px;color:var(--green);margin-bottom:6px"><strong>🚀 TOP GAINERS (last 7d vs prior 7d)</strong></div>
+        <table style="font-size:12px">
+          <thead><tr>
+            <th style="text-align:left">Campaign</th>
+            <th style="text-align:right">Last 7d ₹</th>
+            <th style="text-align:right">WoW %</th>
+            <th style="text-align:right">ROAS shift</th>
+          </tr></thead>
+          <tbody id="c3-ts-gainers-tbody"></tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--red);margin-bottom:6px"><strong>📉 TOP LOSERS (last 7d vs prior 7d)</strong></div>
+        <table style="font-size:12px">
+          <thead><tr>
+            <th style="text-align:left">Campaign</th>
+            <th style="text-align:right">Last 7d ₹</th>
+            <th style="text-align:right">WoW %</th>
+            <th style="text-align:right">ROAS shift</th>
+          </tr></thead>
+          <tbody id="c3-ts-losers-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Campaign</th>
+        <th>Brand</th>
+        <th style="text-align:right">Days</th>
+        <th style="text-align:right">Total ₹</th>
+        <th style="text-align:right">Total Spend</th>
+        <th style="text-align:right">Overall ROAS</th>
+        <th style="text-align:right">CTR</th>
+        <th style="text-align:right">Last 7d ₹</th>
+        <th style="text-align:right">WoW %</th>
+        <th style="text-align:right">ROAS Δ</th>
+      </tr></thead>
+      <tbody id="c3-ts-all-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="ads-brand-all" onclick="setAdsBrand('ALL',this)">All</button>
@@ -1349,6 +1900,97 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ KEYWORDS PAGE ════════════════════════════════════════════════ -->
 <div class="page" id="page-keywords">
+  <!-- C3-I: Search-query mining -->
+  <div class="card" id="c3-sq-summary-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🔍 Search Query Mining · 30d</span>
+      <span class="card-sub" id="c3-sq-summary-sub"></span>
+    </div>
+    <div class="stat-grid" id="c3-sq-kpis" style="padding:12px"></div>
+  </div>
+
+  <div class="card" id="c3-sq-top-impr-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📊 Top 50 Search Queries · by Impressions</span>
+      <span class="card-sub" id="c3-sq-top-impr-sub"></span>
+      <input class="fsearch" placeholder="Filter queries..." id="c3-sq-impr-search" style="margin-left:auto;max-width:240px" oninput="renderC3SqByImpr()">
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Search Query</th>
+        <th style="text-align:right">Impressions</th>
+        <th style="text-align:right">Clicks</th>
+        <th style="text-align:right">ATC</th>
+        <th style="text-align:right">Conversions</th>
+        <th style="text-align:right">GMV</th>
+        <th style="text-align:right">Spend</th>
+        <th style="text-align:right">CTR</th>
+        <th style="text-align:right">CVR</th>
+        <th style="text-align:right">ROAS</th>
+        <th style="text-align:right"># KWs</th>
+      </tr></thead>
+      <tbody id="c3-sq-impr-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c3-sq-top-gmv-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">💰 Top 50 Search Queries · by GMV</span>
+      <span class="card-sub" id="c3-sq-top-gmv-sub"></span>
+      <input class="fsearch" placeholder="Filter queries..." id="c3-sq-gmv-search" style="margin-left:auto;max-width:240px" oninput="renderC3SqByGmv()">
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Search Query</th>
+        <th style="text-align:right">GMV</th>
+        <th style="text-align:right">Spend</th>
+        <th style="text-align:right">ROAS</th>
+        <th style="text-align:right">Impr</th>
+        <th style="text-align:right">Conv</th>
+        <th style="text-align:right">CVR</th>
+        <th style="text-align:right"># KWs</th>
+      </tr></thead>
+      <tbody id="c3-sq-gmv-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c3-sq-mismatch-card" style="margin-bottom:14px;border-left:4px solid var(--accent)">
+    <div class="card-hdr">
+      <span class="card-title">💡 Discovery · Where Search Query ≠ Keyword</span>
+      <span class="card-sub" id="c3-sq-mismatch-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:11px;color:var(--text2)">
+      These are queries customers searched that don't exactly match the keyword you're bidding on — opportunities to add as new keywords (you're already capturing them via match-type).
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Search Query</th>
+        <th style="text-align:right">GMV</th>
+        <th style="text-align:right">Spend</th>
+        <th style="text-align:right">ROAS</th>
+        <th style="text-align:right">Impr</th>
+        <th style="text-align:right">Clicks</th>
+        <th style="text-align:right">Conv</th>
+        <th>Triggered By Keyword(s)</th>
+      </tr></thead>
+      <tbody id="c3-sq-mismatch-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card" id="c3-sq-drill-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🔬 Per-Keyword Drilldown · Top 20 Spend Keywords</span>
+      <span class="card-sub" id="c3-sq-drill-sub"></span>
+    </div>
+    <div id="c3-sq-drill-body" style="padding:8px 14px"></div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Brand</span>
     <button class="fbtn active" id="kw-brand-all" onclick="setKwBrand('ALL',this)">All</button>
@@ -1483,6 +2125,94 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ═══ CASHFLOW PAGE ════════════════════════════════════════════════ -->
 <div class="page" id="page-cashflow">
+  <!-- C5-S: GRN-Return Linkage -->
+  <div class="card" id="c5-s-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🔗 GRN → Return Linkage · Quality Chain</span>
+      <span class="card-sub" id="c5-s-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      GRNs that subsequently spawned debit-note returns. High chain density = quality issues
+      at specific facilities.
+    </div>
+    <div class="stat-grid" id="c5-s-kpis" style="padding:12px"></div>
+
+    <div class="card-hdr" style="margin-top:14px">
+      <span class="card-title" style="font-size:13px">📍 By Facility</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>Facility</th>
+        <th style="text-align:right">GRNs w/ Returns</th>
+        <th style="text-align:right">Return Events</th>
+        <th style="text-align:right">Total Value</th>
+      </tr></thead>
+      <tbody id="c5-s-fc-tbody"></tbody>
+    </table>
+    </div>
+
+    <div class="card-hdr">
+      <span class="card-title" style="font-size:13px">📦 GRN Records with Linked Returns</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>GRN ID</th>
+        <th>PO ID</th>
+        <th>Facility</th>
+        <th>Received</th>
+        <th style="text-align:right">Accepted ₹</th>
+        <th style="text-align:right">Rejected ₹</th>
+        <th style="text-align:right">Returns</th>
+      </tr></thead>
+      <tbody id="c5-s-grn-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- C2: GRN DAILY TREND (injected) -->
+  <div class="card" id="c2-grn-daily-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📈 GRN Daily Burn & Rejection Trend</span>
+      <span class="card-sub" id="c2-grn-daily-sub"></span>
+    </div>
+    <div class="stat-grid" id="c2-grn-daily-kpis" style="padding:12px"></div>
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr;padding:0 12px 12px">
+      <div class="chart-card">
+        <div class="chart-title">Daily GRN Value (₹) · 60d</div>
+        <div style="position:relative;height:260px"><canvas id="c2-grn-value-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Daily Rejection % (7d rolling)</div>
+        <div style="position:relative;height:260px"><canvas id="c2-grn-reject-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="c2-grn-fc-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">🏭 GRN by Facility · 30d</span>
+      <span class="card-sub" id="c2-grn-fc-count"></span>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Facility</th>
+        <th style="text-align:right">GRNs</th>
+        <th style="text-align:right">Total ₹</th>
+        <th style="text-align:right">Accepted ₹</th>
+        <th style="text-align:right">Rejected ₹</th>
+        <th style="text-align:right">Reject % (₹)</th>
+        <th style="text-align:right">Accepted Qty</th>
+        <th style="text-align:right">Rejected Qty</th>
+        <th style="text-align:right">Reject % (Qty)</th>
+      </tr></thead>
+      <tbody id="c2-grn-fc-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Status</span>
     <button class="fbtn active" id="cf-st-all" onclick="setCfStatus('ALL',this)">All</button>
@@ -1633,6 +2363,51 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <!-- ═══ DEEP DIVE PAGE ═══════════════════════════════════════════════ -->
 <!-- ═══ PRICING BY PINCODE PAGE ══════════════════════════════════════ -->
 <div class="page" id="page-ops">
+  <!-- C5-J: Supplier MoM movers -->
+  <div class="card" id="c5-j-card" style="margin-bottom:14px">
+    <div class="card-hdr">
+      <span class="card-title">📊 Supplier Performance · MoM Movers</span>
+      <span class="card-sub" id="c5-j-sub"></span>
+    </div>
+    <div style="padding:8px 14px;font-size:12px;color:var(--text2)">
+      MoM = Month-over-Month change in each metric. Tracking 5 metrics: <strong>LTA</strong> (Lead Time Adherence),
+      <strong>OTIF</strong> (On-Time-In-Full), <strong>LFR</strong> (Line Fill Rate), <strong>UFR</strong> (Unit Fill Rate),
+      <strong>NZFR</strong> (Non-Zero Fill Rate). Rows tracked: (SKU × Facility).
+    </div>
+    <div class="stat-grid" id="c5-j-kpis" style="padding:12px"></div>
+    <div id="c5-j-by-metric" style="padding:8px 14px"></div>
+
+    <div class="card-hdr" style="margin-top:14px">
+      <span class="card-title" style="font-size:13px">🏆 Top Combined Improvers · (sum of MoM across all metrics)</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>SKU</th>
+        <th>Brand</th>
+        <th>Facility</th>
+        <th style="text-align:right">Combined MoM Δ</th>
+      </tr></thead>
+      <tbody id="c5-j-improvers-tbody"></tbody>
+    </table>
+    </div>
+
+    <div class="card-hdr">
+      <span class="card-title" style="font-size:13px">📉 Top Combined Decliners</span>
+    </div>
+    <div style="overflow-x:auto;padding:0 12px 12px">
+    <table>
+      <thead><tr>
+        <th>SKU</th>
+        <th>Brand</th>
+        <th>Facility</th>
+        <th style="text-align:right">Combined MoM Δ</th>
+      </tr></thead>
+      <tbody id="c5-j-decliners-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <!-- ⚙️ OPERATIONS: Returns + RTV + Supplier Performance -->
 
   <!-- ─── Returns KPIs ────────────────────────────────────── -->
@@ -2790,6 +3565,26 @@ function showPage(name, btn) {
   if (name === 'cashflow') renderCashflow();
   if (name === 'doc') renderDoc();
   if (name === 'ops' && typeof renderOps === 'function') renderOps();
+  // Cluster 2 lazy-render for tabs that have new cards
+  if (['pos','cashflow','stock','doc'].indexOf(name) >= 0 && typeof renderCluster2 === 'function') {
+    setTimeout(renderCluster2, 100);
+  }
+  // Cluster 3 lazy-render
+  if (['ads','keywords'].indexOf(name) >= 0 && typeof renderCluster3 === 'function') {
+    setTimeout(renderCluster3, 100);
+  }
+  // Cluster 4 lazy-render
+  if (['overview','cities'].indexOf(name) >= 0 && typeof renderCluster4 === 'function') {
+    setTimeout(renderCluster4, 100);
+  }
+  // Cluster 5 lazy-render
+  if (['pos','ops','stock','cashflow'].indexOf(name) >= 0 && typeof renderCluster5 === 'function') {
+    setTimeout(renderCluster5, 100);
+  }
+  // Cluster 6 lazy-render
+  if (['overview','sales','cities'].indexOf(name) >= 0 && typeof renderCluster6 === 'function') {
+    setTimeout(renderCluster6, 100);
+  }
 }
 
 // ═══ FILTER HANDLERS ═══════════════════════════════════════════════
@@ -9397,6 +10192,15 @@ function bootstrap_pc() {
         PC_PREV = null;
       }
       buildPcFilters();
+      // PC_TABS_REVEAL_PATCH — un-hide the pincode nav tabs now that data loaded
+      try {
+        document.querySelectorAll('.nav-tab').forEach(function(t){
+          var oc = t.getAttribute('onclick') || '';
+          if (oc.indexOf("showPage('pc-") >= 0) {
+            t.style.display = '';
+          }
+        });
+      } catch(e) { console.warn('PC tab reveal failed:', e); }
       buildPcDateSelectors();
       renderPcPricing();
       renderPcOrganic();
@@ -12356,6 +13160,1550 @@ function renderOpsPerfSkuTable() {
     return result;
   };
   showPage._opsHooked = true;
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════
+// CLUSTER 2 — Operations & Stock granularity
+// ═══════════════════════════════════════════════════════════════════
+
+function _c2_tile(label, value, sub, color) {
+  return '<div class="stat-card">' +
+    '<div class="stat-label">' + label + '</div>' +
+    '<div class="stat-value" style="color:' + (color || 'var(--text)') + '">' + value + '</div>' +
+    (sub ? '<div class="stat-sub">' + sub + '</div>' : '') +
+    '</div>';
+}
+
+// ─── PO AGING ─────────────────────────────────────────────────────
+function renderC2PosAging() {
+  if (!D || !D.po_aging || !D.po_aging.meta || !D.po_aging.meta.enabled) {
+    var el = document.getElementById('c2-pos-aging-card');
+    if (el) el.style.display = 'none';
+    return;
+  }
+  document.getElementById('c2-pos-aging-card').style.display = '';
+  var s = D.po_aging.summary || {};
+  var sub = document.getElementById('c2-pos-aging-sub');
+  if (sub) sub.textContent = s.total_pos + ' POs · ' + fmtINR(s.total_value);
+
+  var k = document.getElementById('c2-pos-aging-kpis');
+  if (k) {
+    var h = '';
+    h += _c2_tile('Active POs', fmtNum(s.active_pos), 'in flight', 'var(--text)');
+    h += _c2_tile('Completed', fmtNum(s.completed_pos), s.on_time_pct.toFixed(0) + '% on-time', 'var(--green)');
+    h += _c2_tile('Overdue', fmtNum(s.overdue_count), fmtINR(s.overdue_value), 'var(--red)');
+    h += _c2_tile('At Risk', fmtNum(s.at_risk_count), '<3d to expire · ' + fmtINR(s.at_risk_value), 'var(--orange)');
+    h += _c2_tile('Avg Lead Time', s.avg_lead_time_days.toFixed(1) + 'd', 'median ' + s.median_lead_time_days + 'd', 'var(--text)');
+    h += _c2_tile('Low-Stock POs', fmtNum(s.low_stock_pos), 'emergency replenishment', 'var(--orange)');
+    k.innerHTML = h;
+  }
+
+  // Aging-bucket bar chart
+  var canvas = document.getElementById('c2-pos-aging-chart');
+  if (canvas && window.Chart && D.po_aging.aging_buckets) {
+    if (canvas._chart) canvas._chart.destroy();
+    var b = D.po_aging.aging_buckets;
+    canvas._chart = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: b.map(function(x){ return x.bucket; }),
+        datasets: [{
+          label: 'POs',
+          data: b.map(function(x){ return x.count; }),
+          backgroundColor: ['#22c55e','#eab308','#f97316','#ef4444','#6b7280'],
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
+    });
+  }
+
+  // Lead-time histogram
+  var lt = document.getElementById('c2-pos-leadtime-chart');
+  if (lt && window.Chart && D.po_aging.lead_time_buckets) {
+    if (lt._chart) lt._chart.destroy();
+    var b = D.po_aging.lead_time_buckets;
+    lt._chart = new Chart(lt.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: b.map(function(x){ return x.bucket; }),
+        datasets: [{
+          label: 'POs',
+          data: b.map(function(x){ return x.count; }),
+          backgroundColor: ['#22c55e','#84cc16','#eab308','#ef4444'],
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
+    });
+  }
+
+  // Facility table
+  var fcb = document.getElementById('c2-pos-fc-tbody');
+  if (fcb && D.po_aging.by_facility) {
+    var rows = D.po_aging.by_facility;
+    document.getElementById('c2-pos-fc-count').textContent = rows.length + ' facilities';
+    fcb.innerHTML = rows.slice(0, 30).map(function(r){
+      return '<tr>' +
+        '<td>' + escapeHtml(r.facility_name) + '</td>' +
+        '<td style="text-align:right">' + r.po_count + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.po_value) + '</td>' +
+        '<td style="text-align:right">' + r.completed_count + '</td>' +
+        '<td style="text-align:right;color:' + (r.overdue_count > 0 ? 'var(--red)' : 'inherit') + '">' + r.overdue_count + '</td>' +
+        '<td style="text-align:right">' + r.avg_lead_time.toFixed(1) + 'd</td>' +
+        '<td style="text-align:right">' + r.avg_age.toFixed(1) + 'd</td>' +
+        '<td style="text-align:right">' + r.fill_rate_avg.toFixed(0) + '%</td>' +
+        '<td style="text-align:right">' + r.low_stock_pos + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // Overdue list
+  var ob = document.getElementById('c2-pos-overdue-tbody');
+  if (ob && D.po_aging.overdue_list) {
+    var rows = D.po_aging.overdue_list;
+    document.getElementById('c2-pos-overdue-count').textContent = rows.length + ' overdue · ' + fmtINR(rows.reduce(function(a,r){return a+r.total_value;}, 0));
+    ob.innerHTML = rows.map(function(r){
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.po_id) + '</strong></td>' +
+        '<td>' + escapeHtml(r.facility_name) + '</td>' +
+        '<td style="text-align:right">' + (r.order_date||'—') + '</td>' +
+        '<td style="text-align:right">' + (r.appointment_date||'—') + '</td>' +
+        '<td style="text-align:right;color:var(--red)">' + (r.age_days != null ? r.age_days : '—') + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.pending_units) + '</td>' +
+        '<td style="text-align:right">' + r.fill_rate_pct.toFixed(0) + '%</td>' +
+        '<td style="text-align:right">' + fmtINR(r.total_value) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── GRN DAILY ─────────────────────────────────────────────────────
+function renderC2GrnDaily() {
+  if (!D || !D.grn_daily || !D.grn_daily.meta || !D.grn_daily.meta.enabled) {
+    ['c2-grn-daily-card','c2-grn-fc-card'].forEach(function(id){
+      var e = document.getElementById(id); if (e) e.style.display = 'none';
+    });
+    return;
+  }
+  ['c2-grn-daily-card','c2-grn-fc-card'].forEach(function(id){
+    var e = document.getElementById(id); if (e) e.style.display = '';
+  });
+
+  var m = D.grn_daily.meta;
+  var sub = document.getElementById('c2-grn-daily-sub');
+  if (sub) sub.textContent = m.date_min + ' → ' + m.date_max + ' · ' + m.day_count + ' days';
+
+  var k = document.getElementById('c2-grn-daily-kpis');
+  if (k) {
+    var h = '';
+    h += _c2_tile('60d GRN ₹', fmtINR(m.total_60d_value), m.day_count + ' active days', 'var(--text)');
+    h += _c2_tile('60d Reject %', m.total_60d_rejection_pct.toFixed(2) + '%', 'by value', 'var(--orange)');
+    var recent = D.grn_daily.daily.slice(-7);
+    var recent_total = recent.reduce(function(a,r){return a+r.total_value;}, 0);
+    h += _c2_tile('Last 7d ₹', fmtINR(recent_total), 'recent burn', 'var(--green)');
+    h += _c2_tile('Last 7d Avg', fmtINR(recent_total/Math.max(recent.length,1)), 'per day', 'var(--text)');
+    k.innerHTML = h;
+  }
+
+  // Daily value chart
+  var vc = document.getElementById('c2-grn-value-chart');
+  if (vc && window.Chart && D.grn_daily.daily) {
+    if (vc._chart) vc._chart.destroy();
+    var d = D.grn_daily.daily;
+    vc._chart = new Chart(vc.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: d.map(function(x){ return x.date.slice(5); }),
+        datasets: [
+          { label: 'Accepted', data: d.map(function(x){ return x.accepted_value; }),
+            backgroundColor: '#22c55e' },
+          { label: 'Rejected', data: d.map(function(x){ return x.rejected_value; }),
+            backgroundColor: '#ef4444' },
+        ]
+      },
+      options: { responsive:true, maintainAspectRatio:false,
+        scales: { x: {stacked: true}, y: {stacked: true} } }
+    });
+  }
+
+  // Rejection % rolling chart
+  var rc = document.getElementById('c2-grn-reject-chart');
+  if (rc && window.Chart && D.grn_daily.rolling_7d) {
+    if (rc._chart) rc._chart.destroy();
+    var d = D.grn_daily.rolling_7d;
+    rc._chart = new Chart(rc.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: d.map(function(x){ return x.date.slice(5); }),
+        datasets: [{
+          label: 'Reject % (7d)',
+          data: d.map(function(x){ return x.rolling_7d_rejection_pct; }),
+          borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)',
+          tension: 0.3, fill: true,
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false }
+    });
+  }
+
+  // FC table
+  var fcb = document.getElementById('c2-grn-fc-tbody');
+  if (fcb && D.grn_daily.by_facility_30d) {
+    var rows = D.grn_daily.by_facility_30d;
+    document.getElementById('c2-grn-fc-count').textContent = rows.length + ' facilities';
+    fcb.innerHTML = rows.map(function(r){
+      var rejColor = r.rejection_pct_value > 5 ? 'var(--red)' : (r.rejection_pct_value > 2 ? 'var(--orange)' : 'inherit');
+      return '<tr>' +
+        '<td>' + escapeHtml(r.facility_name) + '</td>' +
+        '<td style="text-align:right">' + r.count + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.total_value) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.accepted_value) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.rejected_value) + '</td>' +
+        '<td style="text-align:right;color:' + rejColor + '">' + r.rejection_pct_value.toFixed(2) + '%</td>' +
+        '<td style="text-align:right">' + fmtNum(r.accepted_qty) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.rejected_qty) + '</td>' +
+        '<td style="text-align:right;color:' + rejColor + '">' + r.rejection_pct_qty.toFixed(2) + '%</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── STOCK XTRA: Replenish, Backend/Frontend, DoC dist, scatter ─
+function renderC2StockXtra() {
+  if (!D || !D.stock_xtra) {
+    ['c2-replenish-card','c2-bf-card','c2-doc-dist-card','c2-scatter-card'].forEach(function(id){
+      var e = document.getElementById(id); if (e) e.style.display = 'none';
+    });
+    return;
+  }
+  ['c2-replenish-card','c2-bf-card','c2-doc-dist-card','c2-scatter-card'].forEach(function(id){
+    var e = document.getElementById(id); if (e) e.style.display = '';
+  });
+
+  var sx = D.stock_xtra;
+
+  // Replenishment per-FC
+  var rb = document.getElementById('c2-replenish-body');
+  var rs = document.getElementById('c2-replenish-sub');
+  if (sx.replenish_actions && sx.replenish_actions.length) {
+    if (rs) rs.textContent = sx.replenish_actions.length + ' FCs with replenish needs';
+    if (rb) {
+      rb.innerHTML = sx.replenish_actions.slice(0, 20).map(function(fc){
+        var skuList = (fc.skus || []).slice(0, 5).map(function(sk){
+          // skus_replenish shape varies — fall back gracefully
+          if (typeof sk === 'string') return sk;
+          if (sk && sk.name) return sk.name;
+          if (sk && sk.item_id) return 'SKU ' + sk.item_id;
+          return JSON.stringify(sk).slice(0, 40);
+        }).join(', ');
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--border)">' +
+          '<strong>' + escapeHtml(fc.facility_name) + '</strong>' +
+          ' <span style="color:var(--text3)">· ' + (fc.city||'') + ' · ' + fc.sku_count + ' SKUs</span>' +
+          (skuList ? '<br><span style="color:var(--text2);font-size:11px">' + escapeHtml(skuList) + '</span>' : '') +
+          '</div>';
+      }).join('');
+    }
+  } else {
+    if (rs) rs.textContent = 'no replenish data (0 FCs)';
+    if (rb) rb.innerHTML = '<div style="color:var(--text3);padding:8px">No SKUs flagged for replenishment.</div>';
+  }
+
+  // Backend vs Frontend
+  var bf = sx.backend_frontend || {};
+  var bfs = bf.summary || {};
+  var bk = document.getElementById('c2-bf-kpis');
+  if (bk) {
+    var h = '';
+    h += _c2_tile('Backend Qty', fmtNum(bfs.total_backend_qty || 0), bfs.backend_pct.toFixed(1) + '% of total', 'var(--accent)');
+    h += _c2_tile('Frontend Qty', fmtNum(bfs.total_frontend_qty || 0), bfs.frontend_pct.toFixed(1) + '% of total', 'var(--green)');
+    h += _c2_tile('Total Qty', fmtNum(bfs.total_qty || 0), 'across all SKUs', 'var(--text)');
+    bk.innerHTML = h;
+  }
+  var bfsub = document.getElementById('c2-bf-sub');
+  if (bfsub) bfsub.textContent = (bf.by_sku||[]).length + ' SKUs';
+  var bfb = document.getElementById('c2-bf-tbody');
+  if (bfb && bf.by_sku) {
+    bfb.innerHTML = bf.by_sku.slice(0, 30).map(function(r){
+      return '<tr>' +
+        '<td>' + escapeHtml(r.name) + '</td>' +
+        '<td>' + brandShort(r.brand||'') + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.backend_qty) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.frontend_qty) + '</td>' +
+        '<td style="text-align:right"><strong>' + fmtNum(r.total_qty) + '</strong></td>' +
+        '<td style="text-align:right">' + r.backend_pct.toFixed(0) + '%</td>' +
+        '<td style="text-align:right">' + r.frontend_pct.toFixed(0) + '%</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // DoC distribution
+  var dd = sx.doc_distribution || [];
+  var ddsub = document.getElementById('c2-doc-dist-sub');
+  if (ddsub) ddsub.textContent = dd.reduce(function(a,b){return a+b.sku_count;}, 0) + ' SKUs across ' + dd.length + ' bands';
+
+  var ddc = document.getElementById('c2-doc-dist-chart');
+  if (ddc && window.Chart && dd.length) {
+    if (ddc._chart) ddc._chart.destroy();
+    var bandColor = function(b){
+      return b === 'Critical' ? '#ef4444' :
+             b === 'Low' ? '#f97316' :
+             b === 'Good' ? '#22c55e' :
+             b === 'No Sales' ? '#6b7280' : '#94a3b8';
+    };
+    ddc._chart = new Chart(ddc.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: dd.map(function(x){ return x.band + ' (' + x.sku_count + ')'; }),
+        datasets: [{
+          data: dd.map(function(x){ return x.sku_count; }),
+          backgroundColor: dd.map(function(x){ return bandColor(x.band); }),
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false }
+    });
+  }
+
+  var gmvc = document.getElementById('c2-doc-gmv-chart');
+  if (gmvc && window.Chart && dd.length) {
+    if (gmvc._chart) gmvc._chart.destroy();
+    var bandColor = function(b){
+      return b === 'Critical' ? '#ef4444' :
+             b === 'Low' ? '#f97316' :
+             b === 'Good' ? '#22c55e' :
+             b === 'No Sales' ? '#6b7280' : '#94a3b8';
+    };
+    gmvc._chart = new Chart(gmvc.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: dd.map(function(x){ return x.band; }),
+        datasets: [{
+          label: 'GMV 30d',
+          data: dd.map(function(x){ return x.total_gmv_30d; }),
+          backgroundColor: dd.map(function(x){ return bandColor(x.band); }),
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
+    });
+  }
+
+  var ddtb = document.getElementById('c2-doc-dist-tbody');
+  if (ddtb) {
+    ddtb.innerHTML = dd.map(function(b){
+      var top = (b.skus || []).slice(0, 3).map(function(s){
+        return escapeHtml((s.name||'').slice(0, 30));
+      }).join(', ');
+      return '<tr>' +
+        '<td><strong>' + b.band + '</strong></td>' +
+        '<td style="text-align:right">' + b.sku_count + '</td>' +
+        '<td style="text-align:right">' + fmtNum(b.total_inv_qty) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(b.total_units_30d) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(b.total_gmv_30d) + '</td>' +
+        '<td style="font-size:11px;color:var(--text2)">' + top + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // Scatter
+  var scatter = sx.sku_x_drr_scatter || [];
+  var ssub = document.getElementById('c2-scatter-sub');
+  if (ssub) ssub.textContent = scatter.length + ' SKUs plotted';
+  var sc = document.getElementById('c2-drr-scatter-chart');
+  if (sc && window.Chart && scatter.length) {
+    if (sc._chart) sc._chart.destroy();
+    var brandColor = function(b){
+      return b === 'Bare Anatomy' ? '#3b82f6' :
+             b === 'Chemist At Play' ? '#f59e0b' :
+             b === 'SunScoop' ? '#eab308' : '#94a3b8';
+    };
+    var byBrand = {};
+    scatter.forEach(function(r){
+      var b = r.brand || 'Unknown';
+      if (!byBrand[b]) byBrand[b] = [];
+      byBrand[b].push({
+        x: r.drr, y: r.doc,
+        r: Math.max(5, Math.min(30, Math.sqrt(r.gmv_30d / 1000) || 5)),
+        sku: r.name, item_id: r.item_id, brand: b,
+        gmv: r.gmv_30d, units: r.units_30d, inv: r.inv_qty,
+      });
+    });
+    sc._chart = new Chart(sc.getContext('2d'), {
+      type: 'bubble',
+      data: {
+        datasets: Object.keys(byBrand).map(function(b){
+          return { label: b, data: byBrand[b], backgroundColor: brandColor(b) };
+        })
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                var d = ctx.raw;
+                return [d.sku, 'DRR: ' + d.x.toFixed(1) + '/d',
+                        'DoC: ' + d.y.toFixed(0) + 'd',
+                        'GMV 30d: ' + fmtINR(d.gmv),
+                        'Inv: ' + fmtNum(d.inv)];
+              }
+            }
+          }
+        },
+        scales: {
+          x: { title: {display:true, text:'DRR (units/day)'}, type:'logarithmic' },
+          y: { title: {display:true, text:'Days of Cover'}, max: 500 }
+        }
+      }
+    });
+  }
+}
+
+function renderCluster2() {
+  try { renderC2PosAging(); } catch(e) { console.error('c2 pos aging:', e); }
+  try { renderC2GrnDaily(); } catch(e) { console.error('c2 grn daily:', e); }
+  try { renderC2StockXtra(); } catch(e) { console.error('c2 stock xtra:', e); }
+}
+// Auto-call cluster 2 after initial load
+(function() {
+  var prevBootstrap = (typeof bootstrap === 'function') ? bootstrap : null;
+  // Don't override; just hook into renderAll via a setInterval check or just call once after data
+  // Hook: poll for D and call renderCluster2 once
+  var attempts = 0;
+  var timer = setInterval(function(){
+    attempts++;
+    if (typeof D !== 'undefined' && D && D.po_aging) {
+      clearInterval(timer);
+      renderCluster2();
+    }
+    if (attempts > 30) { clearInterval(timer); }
+  }, 500);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════
+// CLUSTER 3 — Ads granularity (H, I, T)
+// ═══════════════════════════════════════════════════════════════════
+function _c3_tile(label, value, sub, color) {
+  return '<div class="stat-card">' +
+    '<div class="stat-label">' + label + '</div>' +
+    '<div class="stat-value" style="color:' + (color || 'var(--text)') + '">' + value + '</div>' +
+    (sub ? '<div class="stat-sub">' + sub + '</div>' : '') +
+    '</div>';
+}
+
+// ─── H: 14-day attribution ─────────────────────────────────────
+function renderC3Attribution() {
+  var card = document.getElementById('c3-attr-card');
+  if (!D || !D.ads_xtra || !D.ads_xtra.meta || !D.ads_xtra.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var a = D.ads_xtra.attribution_14d || {};
+  var s = a.summary || {};
+
+  var sub = document.getElementById('c3-attr-sub');
+  if (sub) sub.textContent = (a.by_campaign||[]).length + ' campaigns · ' + fmtINR(s.total_spend) + ' spend';
+
+  var k = document.getElementById('c3-attr-kpis');
+  if (k) {
+    var h = '';
+    h += _c3_tile('GMV 7d Window', fmtINR(s.total_7d_gmv), 'short attribution', 'var(--text)');
+    h += _c3_tile('GMV 14d Window', fmtINR(s.total_14d_gmv), 'long attribution', 'var(--green)');
+    var lagColor = s.lag_uplift_pct > 3 ? 'var(--green)' : (s.lag_uplift_pct > 0 ? 'var(--text)' : 'var(--text3)');
+    h += _c3_tile('Lag Uplift', fmtINR(s.lag_uplift_gmv), s.lag_uplift_pct.toFixed(1) + '% (14d − 7d)', lagColor);
+    h += _c3_tile('ROAS 7d', s.roas_7d.toFixed(2) + 'x', 'on ' + fmtINR(s.total_spend), 'var(--text)');
+    h += _c3_tile('ROAS 14d', s.roas_14d.toFixed(2) + 'x', '+' + (s.roas_14d - s.roas_7d).toFixed(2) + 'x lift', 'var(--green)');
+    k.innerHTML = h;
+  }
+
+  var tb = document.getElementById('c3-attr-tbody');
+  if (tb && a.by_campaign) {
+    tb.innerHTML = a.by_campaign.map(function(c){
+      var lagColor = c.lag_pct > 3 ? 'var(--green)' : (c.lag_pct > 0 ? 'var(--text)' : 'var(--text3)');
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(c.name||'') + '</strong></td>' +
+        '<td>' + brandShort(c.brand||'') + '</td>' +
+        '<td style="text-align:right">' + fmtINR(c.spend) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(c.sales) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(c.gmv_7d) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(c.gmv_14d) + '</td>' +
+        '<td style="text-align:right;color:' + lagColor + '">' + fmtINR(c.lag_gmv) + '</td>' +
+        '<td style="text-align:right;color:' + lagColor + '">' + c.lag_pct.toFixed(1) + '%</td>' +
+        '<td style="text-align:right">' + c.roas.toFixed(2) + 'x</td>' +
+        '<td style="text-align:right">' + c.roas_14d.toFixed(2) + 'x</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── T: Campaign WoW movers ────────────────────────────────────
+function renderC3CampaignTS() {
+  var card = document.getElementById('c3-ts-card');
+  if (!D || !D.ads_xtra || !D.ads_xtra.meta || !D.ads_xtra.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var t = D.ads_xtra.campaign_timeseries || {};
+  var sub = document.getElementById('c3-ts-sub');
+  if (sub) sub.textContent = (t.summary||[]).length + ' campaigns tracked';
+
+  function _movRow(c) {
+    var pctColor = c.wow_sales_pct > 0 ? 'var(--green)' : 'var(--red)';
+    var roasColor = c.wow_roas_delta > 0 ? 'var(--green)' : 'var(--red)';
+    return '<tr>' +
+      '<td>' + escapeHtml((c.name||'').slice(0, 30)) + '</td>' +
+      '<td style="text-align:right">' + fmtINR(c.last7_sales) + '</td>' +
+      '<td style="text-align:right;color:' + pctColor + '">' + c.wow_sales_pct.toFixed(1) + '%</td>' +
+      '<td style="text-align:right;color:' + roasColor + '">' + c.wow_roas_delta.toFixed(2) + '</td>' +
+      '</tr>';
+  }
+
+  var gtb = document.getElementById('c3-ts-gainers-tbody');
+  if (gtb) gtb.innerHTML = (t.top_gainers_wow||[]).map(_movRow).join('') || '<tr><td colspan="4" style="color:var(--text3);text-align:center">— no eligible gainers —</td></tr>';
+  var ltb = document.getElementById('c3-ts-losers-tbody');
+  if (ltb) ltb.innerHTML = (t.top_losers_wow||[]).map(_movRow).join('') || '<tr><td colspan="4" style="color:var(--text3);text-align:center">— no eligible losers —</td></tr>';
+
+  var atb = document.getElementById('c3-ts-all-tbody');
+  if (atb && t.summary) {
+    atb.innerHTML = t.summary.map(function(c){
+      var pctColor = c.wow_sales_pct > 0 ? 'var(--green)' : 'var(--red)';
+      var roasColor = c.wow_roas_delta > 0 ? 'var(--green)' : 'var(--red)';
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(c.name||'') + '</strong></td>' +
+        '<td>' + brandShort(c.brand||'') + '</td>' +
+        '<td style="text-align:right">' + c.days_active + '</td>' +
+        '<td style="text-align:right">' + fmtINR(c.total_sales) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(c.total_spend) + '</td>' +
+        '<td style="text-align:right">' + c.overall_roas.toFixed(2) + 'x</td>' +
+        '<td style="text-align:right">' + c.overall_ctr.toFixed(2) + '%</td>' +
+        '<td style="text-align:right">' + fmtINR(c.last7_sales) + '</td>' +
+        '<td style="text-align:right;color:' + pctColor + '">' + c.wow_sales_pct.toFixed(1) + '%</td>' +
+        '<td style="text-align:right;color:' + roasColor + '">' + c.wow_roas_delta.toFixed(2) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── I: Search query mining ────────────────────────────────────
+function renderC3SqByImpr() {
+  if (!D || !D.ads_xtra || !D.ads_xtra.search_query_mining ||
+      !D.ads_xtra.search_query_mining.meta || !D.ads_xtra.search_query_mining.meta.enabled) return;
+  var sqm = D.ads_xtra.search_query_mining;
+  var rows = sqm.top_queries_by_impressions || [];
+  var filter = (document.getElementById('c3-sq-impr-search') || {}).value || '';
+  filter = filter.toLowerCase();
+  if (filter) rows = rows.filter(function(r){ return (r.query||'').toLowerCase().includes(filter); });
+  var sub = document.getElementById('c3-sq-top-impr-sub');
+  if (sub) sub.textContent = rows.length + ' queries';
+  var tb = document.getElementById('c3-sq-impr-tbody');
+  if (tb) {
+    tb.innerHTML = rows.map(function(r){
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.query||'') + '</strong></td>' +
+        '<td style="text-align:right">' + fmtNum(r.impressions) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.clicks) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.atc) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.conversions) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.gmv) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.spend) + '</td>' +
+        '<td style="text-align:right">' + r.ctr.toFixed(2) + '%</td>' +
+        '<td style="text-align:right">' + r.cvr.toFixed(2) + '%</td>' +
+        '<td style="text-align:right">' + r.roas.toFixed(2) + 'x</td>' +
+        '<td style="text-align:right">' + r.n_keywords + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+function renderC3SqByGmv() {
+  if (!D || !D.ads_xtra || !D.ads_xtra.search_query_mining ||
+      !D.ads_xtra.search_query_mining.meta || !D.ads_xtra.search_query_mining.meta.enabled) return;
+  var sqm = D.ads_xtra.search_query_mining;
+  var rows = sqm.top_queries_by_gmv || [];
+  var filter = (document.getElementById('c3-sq-gmv-search') || {}).value || '';
+  filter = filter.toLowerCase();
+  if (filter) rows = rows.filter(function(r){ return (r.query||'').toLowerCase().includes(filter); });
+  var sub = document.getElementById('c3-sq-top-gmv-sub');
+  if (sub) sub.textContent = rows.length + ' queries';
+  var tb = document.getElementById('c3-sq-gmv-tbody');
+  if (tb) {
+    tb.innerHTML = rows.map(function(r){
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.query||'') + '</strong></td>' +
+        '<td style="text-align:right">' + fmtINR(r.gmv) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.spend) + '</td>' +
+        '<td style="text-align:right">' + r.roas.toFixed(2) + 'x</td>' +
+        '<td style="text-align:right">' + fmtNum(r.impressions) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.conversions) + '</td>' +
+        '<td style="text-align:right">' + r.cvr.toFixed(2) + '%</td>' +
+        '<td style="text-align:right">' + r.n_keywords + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+function renderC3SearchQueryMining() {
+  var allCards = ['c3-sq-summary-card','c3-sq-top-impr-card','c3-sq-top-gmv-card','c3-sq-mismatch-card','c3-sq-drill-card'];
+  if (!D || !D.ads_xtra || !D.ads_xtra.search_query_mining ||
+      !D.ads_xtra.search_query_mining.meta || !D.ads_xtra.search_query_mining.meta.enabled) {
+    allCards.forEach(function(id){ var e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    return;
+  }
+  allCards.forEach(function(id){ var e = document.getElementById(id); if (e) e.style.display = ''; });
+
+  var sqm = D.ads_xtra.search_query_mining;
+  var m = sqm.meta;
+
+  // Summary
+  var sub = document.getElementById('c3-sq-summary-sub');
+  if (sub) sub.textContent = m.window_from + ' → ' + m.window_to;
+  var k = document.getElementById('c3-sq-kpis');
+  if (k) {
+    var h = '';
+    h += _c3_tile('Distinct Queries', fmtNum(m.distinct_queries), 'unique strings searched', 'var(--text)');
+    h += _c3_tile('Distinct Keywords', fmtNum(m.distinct_keywords), 'you bid on', 'var(--text)');
+    h += _c3_tile('Total Impressions', fmtNum(m.total_impressions), '30d window', 'var(--text)');
+    h += _c3_tile('Total GMV', fmtINR(m.total_gmv), 'all query-attributed', 'var(--green)');
+    h += _c3_tile('Total Spend', fmtINR(m.total_spend), 'on these queries', 'var(--orange)');
+    h += _c3_tile('Overall ROAS', m.total_spend > 0 ? (m.total_gmv / m.total_spend).toFixed(2) + 'x' : '—', 'GMV / Spend', 'var(--text)');
+    k.innerHTML = h;
+  }
+
+  // Tables (render through filter functions)
+  renderC3SqByImpr();
+  renderC3SqByGmv();
+
+  // Discovery mismatches
+  var mm = sqm.discovery_mismatches || [];
+  var msub = document.getElementById('c3-sq-mismatch-sub');
+  if (msub) msub.textContent = mm.length + ' mismatched queries (top 30 by GMV)';
+  var mtb = document.getElementById('c3-sq-mismatch-tbody');
+  if (mtb) {
+    if (mm.length === 0) {
+      mtb.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:12px">All search queries match their bid keywords exactly — no discovery opportunities surfaced.</td></tr>';
+    } else {
+      mtb.innerHTML = mm.map(function(r){
+        var roasColor = r.roas > 2 ? 'var(--green)' : (r.roas > 1 ? 'var(--text)' : 'var(--red)');
+        var triggers = (r.triggering_keywords||[]).join(', ');
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(r.query||'') + '</strong></td>' +
+          '<td style="text-align:right">' + fmtINR(r.gmv) + '</td>' +
+          '<td style="text-align:right">' + fmtINR(r.spend) + '</td>' +
+          '<td style="text-align:right;color:' + roasColor + '">' + r.roas.toFixed(2) + 'x</td>' +
+          '<td style="text-align:right">' + fmtNum(r.impressions) + '</td>' +
+          '<td style="text-align:right">' + fmtNum(r.clicks) + '</td>' +
+          '<td style="text-align:right">' + fmtNum(r.conversions) + '</td>' +
+          '<td style="font-size:11px;color:var(--text2)">' + escapeHtml(triggers) + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+
+  // Per-keyword drill
+  var drill = sqm.by_keyword_drill || [];
+  var dsub = document.getElementById('c3-sq-drill-sub');
+  if (dsub) dsub.textContent = drill.length + ' keywords';
+  var db = document.getElementById('c3-sq-drill-body');
+  if (db) {
+    db.innerHTML = drill.map(function(kw){
+      var queriesHtml = (kw.top_queries||[]).map(function(q){
+        return '<tr>' +
+          '<td style="padding-left:24px;color:var(--text2)">↳ ' + escapeHtml(q.query||'') + '</td>' +
+          '<td style="text-align:right">' + fmtNum(q.impressions) + '</td>' +
+          '<td style="text-align:right">' + fmtNum(q.clicks) + '</td>' +
+          '<td style="text-align:right">' + fmtNum(q.conversions) + '</td>' +
+          '<td style="text-align:right">' + fmtINR(q.gmv) + '</td>' +
+          '<td style="text-align:right">' + fmtINR(q.spend) + '</td>' +
+          '</tr>';
+      }).join('');
+      return '<div style="margin-bottom:14px">' +
+        '<div style="background:var(--bg-card-hdr,#1a1a1a);padding:6px 10px;border-radius:4px;font-size:12px">' +
+        '<strong>' + escapeHtml(kw.keyword||'') + '</strong> · ' + kw.distinct_queries + ' distinct queries · ' +
+        fmtINR(kw.total_spend) + ' spend</div>' +
+        '<table style="font-size:12px;margin-top:4px">' +
+        '<thead><tr>' +
+        '<th style="text-align:left;padding-left:24px">Search Query</th>' +
+        '<th style="text-align:right">Impr</th>' +
+        '<th style="text-align:right">Clicks</th>' +
+        '<th style="text-align:right">Conv</th>' +
+        '<th style="text-align:right">GMV</th>' +
+        '<th style="text-align:right">Spend</th>' +
+        '</tr></thead>' +
+        '<tbody>' + queriesHtml + '</tbody></table></div>';
+    }).join('');
+  }
+}
+
+function renderCluster3() {
+  try { renderC3Attribution(); } catch(e) { console.error('c3 attribution:', e); }
+  try { renderC3CampaignTS(); } catch(e) { console.error('c3 campaign ts:', e); }
+  try { renderC3SearchQueryMining(); } catch(e) { console.error('c3 search query:', e); }
+}
+
+// Auto-render after data loads
+(function() {
+  var attempts = 0;
+  var timer = setInterval(function(){
+    attempts++;
+    if (typeof D !== 'undefined' && D && D.ads_xtra) {
+      clearInterval(timer);
+      renderCluster3();
+    }
+    if (attempts > 30) { clearInterval(timer); }
+  }, 500);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════
+// CLUSTER 4 — Brand & Cohort
+// ═══════════════════════════════════════════════════════════════════
+function _c4_tile(label, value, sub, color) {
+  return '<div class="stat-card">' +
+    '<div class="stat-label">' + label + '</div>' +
+    '<div class="stat-value" style="color:' + (color || 'var(--text)') + '">' + value + '</div>' +
+    (sub ? '<div class="stat-sub">' + sub + '</div>' : '') +
+    '</div>';
+}
+
+function _c4_brandColor(name) {
+  if (name === 'Bare Anatomy') return '#3b82f6';
+  if (name === 'Chemist At Play') return '#f59e0b';
+  if (name === 'SunScoop') return '#eab308';
+  return '#94a3b8';
+}
+
+// ─── D: NTB Funnel ─────────────────────────────────────────────
+function renderC4NtbFunnel() {
+  var card = document.getElementById('c4-ntb-card');
+  if (!D || !D.brand_xtra || !D.brand_xtra.meta || !D.brand_xtra.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var nf = D.brand_xtra.ntb_funnel || {};
+  var s = nf.summary || {};
+  var sub = document.getElementById('c4-ntb-sub');
+  if (sub) sub.textContent = (nf.by_brand||[]).length + ' brands · ' + fmtNum(s.total_ntb) + ' NTB acquired';
+
+  var k = document.getElementById('c4-ntb-kpis');
+  if (k) {
+    var h = '';
+    h += _c4_tile('Total Impressions', fmtNum(s.total_impressions), '30d ad reach', 'var(--text)');
+    h += _c4_tile('Total Orders', fmtNum(s.total_orders), 'all brands', 'var(--text)');
+    h += _c4_tile('Blended CVR', s.blended_cvr.toFixed(3) + '%', 'impr → order', 'var(--text)');
+    h += _c4_tile('NTB Acquired', fmtNum(s.total_ntb), s.blended_ntb_rate.toFixed(0) + '% of orders', 'var(--green)');
+    h += _c4_tile('Ad Spend', fmtINR(s.total_ad_spend), 'paid acquisition', 'var(--orange)');
+    h += _c4_tile('Blended CAC', '₹' + s.blended_cac.toFixed(0), 'per NTB', 'var(--accent)');
+    k.innerHTML = h;
+  }
+
+  var tb = document.getElementById('c4-ntb-tbody');
+  if (tb && nf.by_brand) {
+    tb.innerHTML = nf.by_brand.map(function(b){
+      var cacColor = b.cac_estimated > 0 && b.cac_estimated < 100 ? 'var(--green)' :
+                     b.cac_estimated < 200 ? 'var(--text)' : 'var(--orange)';
+      return '<tr>' +
+        '<td><strong style="color:' + _c4_brandColor(b.brand) + '">' + escapeHtml(b.brand) + '</strong></td>' +
+        '<td style="text-align:right">' + fmtNum(b.impressions) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(b.orders) + '</td>' +
+        '<td style="text-align:right">' + b.cvr_pct.toFixed(2) + '%</td>' +
+        '<td style="text-align:right">' + fmtNum(b.ntb_buyers) + '</td>' +
+        '<td style="text-align:right">' + b.ntb_pct.toFixed(0) + '%</td>' +
+        '<td style="text-align:right">' + fmtNum(b.repeat_buyers_est) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(b.ad_spend) + '</td>' +
+        '<td style="text-align:right;color:' + cacColor + '">₹' + b.cac_estimated.toFixed(0) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(b.units) + '</td>' +
+        '<td style="text-align:right">' + b.units_per_order.toFixed(2) + '</td>' +
+        '<td style="text-align:right">₹' + b.gmv_per_order.toFixed(0) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── L: Categories ─────────────────────────────────────────────
+function renderC4Categories() {
+  var card = document.getElementById('c4-cat-card');
+  var cardX = document.getElementById('c4-cross-card');
+  if (!D || !D.brand_xtra || !D.brand_xtra.categories) {
+    if (card) card.style.display = 'none';
+    if (cardX) cardX.style.display = 'none';
+    return;
+  }
+  if (card) card.style.display = '';
+  if (cardX) cardX.style.display = '';
+
+  var c = D.brand_xtra.categories;
+  var bb = c.by_brand || [];
+  var sub = document.getElementById('c4-cat-sub');
+  if (sub) sub.textContent = bb.length + ' brands · ' + (c.cross_brand||[]).length + ' categories';
+
+  // Per-brand panel — wide rows with brand badge + categories
+  var body = document.getElementById('c4-cat-body');
+  if (body) {
+    body.innerHTML = bb.map(function(b){
+      var concentrationColor = b.hhi > 2500 ? 'var(--red)' : b.hhi > 1500 ? 'var(--orange)' : 'var(--green)';
+      var catBars = b.categories.map(function(c){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0">' +
+          '<span style="min-width:200px;color:var(--text2);font-size:12px">' + escapeHtml(c.category) + '</span>' +
+          '<div style="flex:1;height:14px;background:var(--bg-elev);border-radius:3px;position:relative">' +
+            '<div style="width:' + c.share_pct.toFixed(1) + '%;height:100%;background:' + _c4_brandColor(b.brand) + ';border-radius:3px"></div>' +
+          '</div>' +
+          '<span style="min-width:80px;text-align:right;font-size:12px">' + fmtNum(c.units) + ' (' + c.share_pct.toFixed(1) + '%)</span>' +
+          '</div>';
+      }).join('');
+      return '<div style="margin-bottom:14px;padding:10px;border-radius:6px;border:1px solid var(--border)">' +
+        '<div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">' +
+          '<strong style="color:' + _c4_brandColor(b.brand) + ';font-size:14px">' + escapeHtml(b.brand) + '</strong>' +
+          '<span style="color:var(--text2);font-size:11px">' + fmtNum(b.total_units) + ' units · ' + b.category_count + ' categories</span>' +
+          '<span style="margin-left:auto;font-size:11px;color:' + concentrationColor + '"><strong>HHI ' + b.hhi.toFixed(0) + '</strong> · ' + b.concentration_label + '</span>' +
+        '</div>' +
+        catBars +
+        '</div>';
+    }).join('');
+  }
+
+  // Cross-brand table
+  var ct = document.getElementById('c4-cross-tbody');
+  if (ct && c.cross_brand) {
+    var cs = document.getElementById('c4-cross-sub');
+    if (cs) cs.textContent = c.cross_brand.length + ' categories';
+    ct.innerHTML = c.cross_brand.map(function(r){
+      var splitHtml = r.brand_split.map(function(bs){
+        return '<span style="margin-right:10px;font-size:11px">' +
+          '<span style="display:inline-block;width:10px;height:10px;background:' + _c4_brandColor(bs.brand) + ';border-radius:2px;margin-right:4px;vertical-align:middle"></span>' +
+          escapeHtml(bs.brand) + ' ' + fmtNum(bs.units) + ' (' + bs.share_pct.toFixed(0) + '%)' +
+          '</span>';
+      }).join('');
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.category) + '</strong></td>' +
+        '<td style="text-align:right">' + fmtNum(r.total_units) + '</td>' +
+        '<td>' + splitHtml + '</td>' +
+        '<td><strong style="color:' + _c4_brandColor(r.dominant_brand||'') + '">' + escapeHtml(r.dominant_brand||'') + '</strong></td>' +
+        '<td style="text-align:right">' + r.dominant_share_pct.toFixed(0) + '%</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── M: NTB × City × Brand ────────────────────────────────────
+function renderC4NtbGeo() {
+  var cards = ['c4-geo-summary-card','c4-geo-topcombo-card','c4-geo-bybrand-card','c4-geo-heatmap-card'];
+  if (!D || !D.brand_xtra || !D.brand_xtra.ntb_geo ||
+      !D.brand_xtra.ntb_geo.meta || !D.brand_xtra.ntb_geo.meta.enabled) {
+    cards.forEach(function(id){ var e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    return;
+  }
+  cards.forEach(function(id){ var e = document.getElementById(id); if (e) e.style.display = ''; });
+
+  var g = D.brand_xtra.ntb_geo;
+  var m = g.meta;
+  var sub = document.getElementById('c4-geo-sub');
+  if (sub) sub.textContent = m.window_from + ' → ' + m.window_to;
+
+  // Summary
+  var totalNtb = (g.city_x_brand||[]).reduce(function(a,r){return a+r.ntb;}, 0);
+  var totalOrders = (g.city_x_brand||[]).reduce(function(a,r){return a+r.orders;}, 0);
+  var totalImpr = (g.city_x_brand||[]).reduce(function(a,r){return a+r.impressions;}, 0);
+  var k = document.getElementById('c4-geo-kpis');
+  if (k) {
+    var h = '';
+    h += _c4_tile('Cities (active)', fmtNum(m.distinct_cities), 'with brand activity', 'var(--text)');
+    h += _c4_tile('Brand-City Pairs', fmtNum(m.total_rows), 'tracked combinations', 'var(--text)');
+    h += _c4_tile('Total NTB (geo)', fmtNum(totalNtb), '30d acquired', 'var(--green)');
+    h += _c4_tile('Total Orders (geo)', fmtNum(totalOrders), 'across all cities', 'var(--text)');
+    h += _c4_tile('Blended NTB Rate', totalOrders ? (totalNtb/totalOrders*100).toFixed(0) + '%' : '—', 'NTB/orders', 'var(--accent)');
+    h += _c4_tile('Total Impressions', fmtNum(totalImpr), 'geo-attributed', 'var(--text)');
+    k.innerHTML = h;
+  }
+
+  // Top combos
+  var tcb = document.getElementById('c4-geo-topcombo-tbody');
+  if (tcb && g.top_combos) {
+    var tcs = document.getElementById('c4-geo-topcombo-sub');
+    if (tcs) tcs.textContent = g.top_combos.length + ' (city × brand) pairs';
+    tcb.innerHTML = g.top_combos.map(function(r){
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.city) + '</strong></td>' +
+        '<td><strong style="color:' + _c4_brandColor(r.brand) + '">' + escapeHtml(r.brand) + '</strong></td>' +
+        '<td style="text-align:right">' + fmtNum(r.ntb) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.orders) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.impressions) + '</td>' +
+        '<td style="text-align:right">' + r.ntb_rate_pct.toFixed(0) + '%</td>' +
+        '<td style="text-align:right">' + r.cvr_pct.toFixed(2) + '%</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // By brand
+  var bbb = document.getElementById('c4-geo-bybrand-body');
+  if (bbb && g.by_brand) {
+    var bbs = document.getElementById('c4-geo-bybrand-sub');
+    if (bbs) bbs.textContent = g.by_brand.length + ' brands';
+    bbb.innerHTML = g.by_brand.map(function(b){
+      var concentrationColor = b.hhi_cities > 2500 ? 'var(--red)' :
+                               b.hhi_cities > 1500 ? 'var(--orange)' : 'var(--green)';
+      var top5 = (b.cities||[]).slice(0, 5).map(function(c){
+        return '<span style="margin-right:8px;font-size:11px;color:var(--text2)">' +
+          escapeHtml(c.city) + ' <strong style="color:var(--text)">' + fmtNum(c.ntb) + '</strong></span>';
+      }).join('');
+      return '<div style="margin-bottom:12px;padding:10px;border:1px solid var(--border);border-radius:6px">' +
+        '<div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">' +
+          '<strong style="color:' + _c4_brandColor(b.brand) + ';font-size:13px">' + escapeHtml(b.brand) + '</strong>' +
+          '<span style="font-size:11px;color:var(--text2)">' +
+            fmtNum(b.total_ntb) + ' NTB · ' +
+            b.cities_with_ntb + ' cities · ' +
+            'Top10 = ' + b.top10_ntb_share_pct.toFixed(0) + '% of NTB' +
+          '</span>' +
+          '<span style="margin-left:auto;font-size:11px;color:' + concentrationColor + '"><strong>HHI ' + b.hhi_cities.toFixed(0) + '</strong></span>' +
+        '</div>' +
+        '<div>' + top5 + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Heatmap: top 30 cities × all brands. NTB intensity as background.
+  var cxb = g.city_x_brand || [];
+  if (cxb.length) {
+    // Group by city, then brand
+    var byCity = {};
+    var brandsAll = new Set();
+    cxb.forEach(function(r){
+      brandsAll.add(r.brand);
+      if (!byCity[r.city]) byCity[r.city] = { city: r.city, totalNtb: 0, brands: {} };
+      byCity[r.city].brands[r.brand] = r.ntb;
+      byCity[r.city].totalNtb += r.ntb;
+    });
+    var cities = Object.values(byCity).sort(function(a,b){return b.totalNtb - a.totalNtb;}).slice(0, 30);
+    var brandList = Array.from(brandsAll).sort();
+
+    // Find max NTB for color scaling
+    var maxNtb = 0;
+    cxb.forEach(function(r){ if (r.ntb > maxNtb) maxNtb = r.ntb; });
+
+    // Header
+    var thead = document.getElementById('c4-geo-heatmap-thead');
+    if (thead) {
+      thead.innerHTML = '<tr>' +
+        '<th style="text-align:left;min-width:140px">City</th>' +
+        brandList.map(function(br){
+          return '<th style="text-align:right;min-width:90px;color:' + _c4_brandColor(br) + '">' + escapeHtml(br) + '</th>';
+        }).join('') +
+        '<th style="text-align:right">Total</th>' +
+        '</tr>';
+    }
+    var tbody = document.getElementById('c4-geo-heatmap-tbody');
+    if (tbody) {
+      tbody.innerHTML = cities.map(function(c){
+        var cells = brandList.map(function(br){
+          var v = c.brands[br] || 0;
+          // Color scale 0 → max (alpha 0 → 0.55)
+          var intensity = Math.min(0.55, v / (maxNtb || 1) * 0.7);
+          var bg = 'rgba(34,197,94,' + intensity.toFixed(2) + ')';
+          return '<td style="text-align:right;background:' + bg + ';padding:4px 8px">' +
+            (v > 0 ? fmtNum(v) : '—') + '</td>';
+        }).join('');
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(c.city) + '</strong></td>' +
+          cells +
+          '<td style="text-align:right;border-left:1px solid var(--border)"><strong>' + fmtNum(c.totalNtb) + '</strong></td>' +
+          '</tr>';
+      }).join('');
+    }
+    var hsub = document.getElementById('c4-geo-heatmap-sub');
+    if (hsub) hsub.textContent = cities.length + ' cities × ' + brandList.length + ' brands';
+  }
+}
+
+function renderCluster4() {
+  try { renderC4NtbFunnel(); } catch(e) { console.error('c4 ntb funnel:', e); }
+  try { renderC4Categories(); } catch(e) { console.error('c4 categories:', e); }
+  try { renderC4NtbGeo(); } catch(e) { console.error('c4 ntb geo:', e); }
+}
+
+// Auto-render after data loads
+(function() {
+  var attempts = 0;
+  var timer = setInterval(function(){
+    attempts++;
+    if (typeof D !== 'undefined' && D && D.brand_xtra) {
+      clearInterval(timer);
+      renderCluster4();
+    }
+    if (attempts > 30) { clearInterval(timer); }
+  }, 500);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════
+// CLUSTER 5 — Supplier deep (J, Q, R, S)
+// ═══════════════════════════════════════════════════════════════════
+function _c5_tile(label, value, sub, color) {
+  return '<div class="stat-card">' +
+    '<div class="stat-label">' + label + '</div>' +
+    '<div class="stat-value" style="color:' + (color || 'var(--text)') + '">' + value + '</div>' +
+    (sub ? '<div class="stat-sub">' + sub + '</div>' : '') +
+    '</div>';
+}
+
+// ─── Q: PO Type Breakdown ─────────────────────────────────────
+function renderC5PoTypes() {
+  var card = document.getElementById('c5-q-card');
+  if (!D || !D.po_types || !D.po_types.meta || !D.po_types.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var pt = D.po_types;
+  var sub = document.getElementById('c5-q-sub');
+  var ls = pt.low_stock_breakdown || {};
+  if (sub) sub.textContent = (ls.emergency_count + ls.strategic_count) + ' POs total';
+
+  var k = document.getElementById('c5-q-kpis');
+  if (k) {
+    var emerColor = ls.emergency_share_pct > 70 ? 'var(--red)' : ls.emergency_share_pct > 40 ? 'var(--orange)' : 'var(--green)';
+    var h = '';
+    h += _c5_tile('Strategic POs', fmtNum(ls.strategic_count), fmtINR(ls.strategic_value) + ' · avg ' + fmtINR(ls.strategic_avg_size), 'var(--green)');
+    h += _c5_tile('Emergency POs', fmtNum(ls.emergency_count), fmtINR(ls.emergency_value) + ' · avg ' + fmtINR(ls.emergency_avg_size), emerColor);
+    h += _c5_tile('Emergency Share', ls.emergency_share_pct.toFixed(0) + '%', 'of PO count', emerColor);
+    h += _c5_tile('Emergency ₹ Share', ls.emergency_value_share_pct.toFixed(0) + '%', 'of PO value', emerColor);
+    h += _c5_tile('Strategic Avg ₹', fmtINR(ls.strategic_avg_size), 'planned PO size', 'var(--text)');
+    h += _c5_tile('Emergency Avg ₹', fmtINR(ls.emergency_avg_size), 'reactive PO size', 'var(--text)');
+    k.innerHTML = h;
+  }
+
+  var btb = document.getElementById('c5-q-bt-tbody');
+  if (btb && pt.by_business_type) {
+    btb.innerHTML = pt.by_business_type.map(function(r){
+      var emergPct = r.count ? (r.low_stock_count / r.count * 100) : 0;
+      var color = emergPct > 70 ? 'var(--red)' : emergPct > 40 ? 'var(--orange)' : 'var(--green)';
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.business_type) + '</strong></td>' +
+        '<td style="text-align:right">' + fmtNum(r.count) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.value) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.units) + '</td>' +
+        '<td style="text-align:right">' + r.low_stock_count + '</td>' +
+        '<td style="text-align:right">' + r.strategic_count + '</td>' +
+        '<td style="text-align:right;color:' + color + '">' + emergPct.toFixed(0) + '%</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  var ftb = document.getElementById('c5-q-fc-tbody');
+  if (ftb && pt.by_facility) {
+    ftb.innerHTML = pt.by_facility.slice(0, 30).map(function(r){
+      var color = r.emergency_share_pct > 70 ? 'var(--red)' : r.emergency_share_pct > 40 ? 'var(--orange)' : 'var(--green)';
+      return '<tr>' +
+        '<td>' + escapeHtml(r.facility_name) + '</td>' +
+        '<td style="text-align:right">' + r.total_pos + '</td>' +
+        '<td style="text-align:right">' + r.emergency_count + '</td>' +
+        '<td style="text-align:right">' + r.strategic_count + '</td>' +
+        '<td style="text-align:right;color:' + color + '">' + r.emergency_share_pct.toFixed(0) + '%</td>' +
+        '<td style="text-align:right">' + fmtINR(r.emergency_value) + '</td>' +
+        '<td style="text-align:right">' + fmtINR(r.strategic_value) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── J: MoM Movers ────────────────────────────────────────────
+function renderC5MomMovers() {
+  var card = document.getElementById('c5-j-card');
+  if (!D || !D.supplier_xtra || !D.supplier_xtra.meta || !D.supplier_xtra.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+
+  var sx = D.supplier_xtra;
+  var sub = document.getElementById('c5-j-sub');
+  if (sub) sub.textContent = sx.meta.row_count + ' (SKU × FC) tracked · ' + sx.meta.metric_count + ' metrics';
+
+  // KPI tiles per metric
+  var k = document.getElementById('c5-j-kpis');
+  if (k) {
+    var h = '';
+    var ms = (sx.summary && sx.summary.metric_summary) || {};
+    Object.keys(ms).forEach(function(mname){
+      var m = ms[mname];
+      var color = m.avg_change_pct > 0 ? 'var(--green)' : 'var(--red)';
+      h += _c5_tile(mname + ' MoM', m.avg_change_pct.toFixed(1) + '%',
+                    m.improvers + '↑ / ' + m.decliners + '↓', color);
+    });
+    k.innerHTML = h;
+  }
+
+  // Per-metric breakdown: side-by-side improver/decliner mini tables
+  var bm = document.getElementById('c5-j-by-metric');
+  if (bm && sx.by_metric) {
+    bm.innerHTML = Object.keys(sx.by_metric).map(function(mname){
+      var m = sx.by_metric[mname];
+      var imp = (m.top_improvers||[]).slice(0,5).map(function(r){
+        return '<tr><td>' + escapeHtml((r.item_name||'').slice(0,30)) + '</td>' +
+          '<td style="font-size:11px;color:var(--text3)">' + escapeHtml(r.fc_name||'') + '</td>' +
+          '<td style="text-align:right;color:var(--green)">+' + r.mom_change_pct.toFixed(1) + '%</td></tr>';
+      }).join('');
+      var dec = (m.top_decliners||[]).slice(0,5).map(function(r){
+        return '<tr><td>' + escapeHtml((r.item_name||'').slice(0,30)) + '</td>' +
+          '<td style="font-size:11px;color:var(--text3)">' + escapeHtml(r.fc_name||'') + '</td>' +
+          '<td style="text-align:right;color:var(--red)">' + r.mom_change_pct.toFixed(1) + '%</td></tr>';
+      }).join('');
+      return '<div style="margin-bottom:14px">' +
+        '<div style="font-weight:600;font-size:13px;margin-bottom:6px"><strong>' + mname + '</strong>' +
+          ' · ' + m.row_count + ' rows · avg ' + (m.avg_change_pct > 0 ? '+' : '') + m.avg_change_pct.toFixed(1) + '%</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+          '<div><div style="font-size:11px;color:var(--green);margin-bottom:4px">↑ Top 5 Improvers</div>' +
+            '<table style="font-size:11px"><tbody>' + imp + '</tbody></table></div>' +
+          '<div><div style="font-size:11px;color:var(--red);margin-bottom:4px">↓ Top 5 Decliners</div>' +
+            '<table style="font-size:11px"><tbody>' + dec + '</tbody></table></div>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  // Combined improvers / decliners
+  var imptb = document.getElementById('c5-j-improvers-tbody');
+  if (imptb) {
+    imptb.innerHTML = (sx.top_overall_improvers||[]).map(function(r){
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.item_name||r.item_id||'') + '</strong></td>' +
+        '<td>' + brandShort(r.brand||'') + '</td>' +
+        '<td>' + escapeHtml(r.fc_name||'') + '</td>' +
+        '<td style="text-align:right;color:var(--green)"><strong>+' + r.combined_mom_change.toFixed(1) + '%</strong></td>' +
+        '</tr>';
+    }).join('');
+  }
+  var dectb = document.getElementById('c5-j-decliners-tbody');
+  if (dectb) {
+    dectb.innerHTML = (sx.top_overall_decliners||[]).map(function(r){
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(r.item_name||r.item_id||'') + '</strong></td>' +
+        '<td>' + brandShort(r.brand||'') + '</td>' +
+        '<td>' + escapeHtml(r.fc_name||'') + '</td>' +
+        '<td style="text-align:right;color:var(--red)"><strong>' + r.combined_mom_change.toFixed(1) + '%</strong></td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── R: FC-Level DoC ──────────────────────────────────────────
+function renderC5FcDoc() {
+  var card = document.getElementById('c5-r-card');
+  if (!D || !D.fc_doc || !D.fc_doc.meta || !D.fc_doc.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+
+  var fd = D.fc_doc;
+  var s = fd.summary || {};
+  var sub = document.getElementById('c5-r-sub');
+  if (sub) sub.textContent = fd.meta.row_count + ' (SKU×FC) rows · ' + fd.meta.with_drr + ' with DRR';
+
+  var k = document.getElementById('c5-r-kpis');
+  if (k) {
+    var h = '';
+    h += _c5_tile('Critical', fmtNum(s.critical||0), 'DoC < 3 days', 'var(--red)');
+    h += _c5_tile('Low', fmtNum(s.low||0), 'DoC 3-10 days', 'var(--orange)');
+    h += _c5_tile('Good', fmtNum(s.good||0), 'DoC > 10 days', 'var(--green)');
+    h += _c5_tile('No Sales', fmtNum(s.no_sales||0), 'DRR = 0', 'var(--text3)');
+    h += _c5_tile('FC Alerts', fmtNum((fd.fc_alerts||[]).length), 'facilities w/ critical SKUs', 'var(--red)');
+    k.innerHTML = h;
+  }
+
+  var ab = document.getElementById('c5-r-alerts-body');
+  if (ab) {
+    var alerts = fd.fc_alerts || [];
+    if (!alerts.length) {
+      ab.innerHTML = '<div style="color:var(--text3);padding:8px">No FCs have SKUs with DoC < 7 days.</div>';
+    } else {
+      ab.innerHTML = alerts.slice(0,20).map(function(fc){
+        var sList = (fc.skus||[]).slice(0,8).map(function(s_){
+          return '<tr>' +
+            '<td style="padding-left:18px">' + escapeHtml((s_.item_name||'').slice(0,40)) + '</td>' +
+            '<td>' + brandShort(s_.brand||'') + '</td>' +
+            '<td style="text-align:right">' + fmtNum(s_.soh_qty) + '</td>' +
+            '<td style="text-align:right">' + s_.drr_30d.toFixed(2) + '/d</td>' +
+            '<td style="text-align:right;color:var(--red)"><strong>' + s_.doc_days.toFixed(1) + 'd</strong></td>' +
+            '</tr>';
+        }).join('');
+        return '<div style="margin-bottom:12px;padding:8px;border:1px solid var(--border);border-radius:6px">' +
+          '<div style="font-weight:600;margin-bottom:4px"><strong>' + escapeHtml(fc.fc_name) + '</strong>' +
+          ' <span style="color:var(--red);font-size:11px">· ' + fc.critical_sku_count + ' critical SKUs</span></div>' +
+          '<table style="font-size:11px"><thead><tr>' +
+          '<th style="padding-left:18px">SKU</th><th>Brand</th>' +
+          '<th style="text-align:right">SOH</th><th style="text-align:right">DRR</th><th style="text-align:right">DoC</th>' +
+          '</tr></thead><tbody>' + sList + '</tbody></table></div>';
+      }).join('');
+    }
+  }
+
+  var wtb = document.getElementById('c5-r-worst-tbody');
+  if (wtb && fd.worst_combos) {
+    wtb.innerHTML = fd.worst_combos.map(function(r){
+      var bandColor = r.doc_band === 'Critical' ? 'var(--red)' : r.doc_band === 'Low' ? 'var(--orange)' : 'var(--green)';
+      return '<tr>' +
+        '<td>' + escapeHtml((r.item_name||'').slice(0,40)) + '</td>' +
+        '<td>' + brandShort(r.brand||'') + '</td>' +
+        '<td>' + escapeHtml(r.fc_name||'') + '</td>' +
+        '<td>' + escapeHtml(r.city||'') + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.soh_qty) + '</td>' +
+        '<td style="text-align:right">' + r.drr_30d.toFixed(2) + '/d</td>' +
+        '<td style="text-align:right;color:' + bandColor + '"><strong>' + r.doc_days.toFixed(1) + 'd</strong></td>' +
+        '<td><span style="color:' + bandColor + '">' + r.doc_band + '</span></td>' +
+        '</tr>';
+    }).join('');
+  }
+}
+
+// ─── S: GRN-Return Linkage ────────────────────────────────────
+function renderC5GrnReturnsLink() {
+  var card = document.getElementById('c5-s-card');
+  if (!D || !D.grn_returns_link || !D.grn_returns_link.meta || !D.grn_returns_link.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+
+  var gl = D.grn_returns_link;
+  var m = gl.meta;
+  var sub = document.getElementById('c5-s-sub');
+  if (sub) {
+    if (m.with_returns_count === 0) {
+      sub.textContent = m.row_count + ' GRNs · 0 with return links · ' + (m.no_returns_message || '');
+    } else {
+      sub.textContent = m.with_returns_count + ' GRNs with returns · ' + m.total_return_events + ' return events';
+    }
+  }
+
+  var k = document.getElementById('c5-s-kpis');
+  if (k) {
+    var h = '';
+    h += _c5_tile('GRNs (90d)', fmtNum(m.row_count), 'total received', 'var(--text)');
+    h += _c5_tile('GRNs w/ Returns', fmtNum(m.with_returns_count||0), (m.return_chain_pct||0).toFixed(1) + '% of GRNs', 'var(--orange)');
+    h += _c5_tile('Return Events', fmtNum(m.total_return_events||0), 'linked to GRNs', 'var(--red)');
+    h += _c5_tile('Return Chain %', (m.return_chain_pct||0).toFixed(1) + '%', 'quality signal', 'var(--accent)');
+    k.innerHTML = h;
+  }
+
+  var ftb = document.getElementById('c5-s-fc-tbody');
+  if (ftb && gl.by_facility) {
+    if (!gl.by_facility.length) {
+      ftb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:10px">No GRN→Return chains detected.</td></tr>';
+    } else {
+      ftb.innerHTML = gl.by_facility.map(function(r){
+        return '<tr>' +
+          '<td>' + escapeHtml(r.facility_name) + '</td>' +
+          '<td style="text-align:right">' + r.grn_count + '</td>' +
+          '<td style="text-align:right">' + r.total_returns + '</td>' +
+          '<td style="text-align:right">' + fmtINR(r.total_value) + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+
+  var gtb = document.getElementById('c5-s-grn-tbody');
+  if (gtb && gl.grns_with_returns) {
+    if (!gl.grns_with_returns.length) {
+      gtb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:10px">No GRN→Return chains detected.</td></tr>';
+    } else {
+      gtb.innerHTML = gl.grns_with_returns.slice(0,50).map(function(r){
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(r.grn_id||'') + '</strong></td>' +
+          '<td>' + escapeHtml(r.po_id||'') + '</td>' +
+          '<td>' + escapeHtml(r.facility_name||'') + '</td>' +
+          '<td>' + (r.received_date||'') + '</td>' +
+          '<td style="text-align:right">' + fmtINR(r.accepted_value) + '</td>' +
+          '<td style="text-align:right">' + fmtINR(r.rejected_value) + '</td>' +
+          '<td style="text-align:right;color:var(--orange)"><strong>' + r.return_count + '</strong></td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+}
+
+function renderCluster5() {
+  try { renderC5PoTypes(); } catch(e) { console.error('c5 po types:', e); }
+  try { renderC5MomMovers(); } catch(e) { console.error('c5 mom movers:', e); }
+  try { renderC5FcDoc(); } catch(e) { console.error('c5 fc doc:', e); }
+  try { renderC5GrnReturnsLink(); } catch(e) { console.error('c5 grn returns link:', e); }
+}
+
+(function() {
+  var attempts = 0;
+  var timer = setInterval(function(){
+    attempts++;
+    if (typeof D !== 'undefined' && D && D.po_types !== undefined) {
+      clearInterval(timer);
+      renderCluster5();
+    }
+    if (attempts > 30) { clearInterval(timer); }
+  }, 500);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════
+// CLUSTER 6 — Predictive (U, V, W, X)
+// ═══════════════════════════════════════════════════════════════════
+function _c6_tile(label, value, sub, color) {
+  return '<div class="stat-card">' +
+    '<div class="stat-label">' + label + '</div>' +
+    '<div class="stat-value" style="color:' + (color || 'var(--text)') + '">' + value + '</div>' +
+    (sub ? '<div class="stat-sub">' + sub + '</div>' : '') +
+    '</div>';
+}
+
+// ─── U: Stockout Forecast ─────────────────────────────────────
+function renderC6Stockout() {
+  var card = document.getElementById('c6-u-card');
+  if (!D || !D.predictions || !D.predictions.stockout_forecast ||
+      !D.predictions.stockout_forecast.meta || !D.predictions.stockout_forecast.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var sf = D.predictions.stockout_forecast;
+  var s = sf.summary || {};
+  var tc = s.tier_counts || {};
+  var tg = s.tier_gmv_at_risk || {};
+
+  var sub = document.getElementById('c6-u-sub');
+  if (sub) sub.textContent = sf.meta.sku_count + ' SKUs analyzed · ' + fmtINR(s.total_7d_gmv_at_risk) + ' total 7d risk';
+
+  var k = document.getElementById('c6-u-kpis');
+  if (k) {
+    var h = '';
+    h += _c6_tile('24h Critical', fmtNum(tc['24h Critical'] || 0), fmtINR(tg['24h Critical'] || 0), 'var(--red)');
+    h += _c6_tile('3-Day Critical', fmtNum(tc['3-Day Critical'] || 0), fmtINR(tg['3-Day Critical'] || 0), 'var(--red)');
+    h += _c6_tile('7-Day Risk', fmtNum(tc['7-Day Risk'] || 0), fmtINR(tg['7-Day Risk'] || 0), 'var(--orange)');
+    h += _c6_tile('14-Day Watch', fmtNum(tc['14-Day Watch'] || 0), fmtINR(tg['14-Day Watch'] || 0), 'var(--accent)');
+    h += _c6_tile('30-Day OK', fmtNum(tc['30-Day OK'] || 0), 'monitoring', 'var(--text)');
+    h += _c6_tile('Safe + No Sales', fmtNum((tc['Safe'] || 0) + (tc['No Sales'] || 0)), 'low concern', 'var(--green)');
+    k.innerHTML = h;
+  }
+
+  var tb = document.getElementById('c6-u-alerts-tbody');
+  if (tb) {
+    var alerts = sf.critical_alerts || [];
+    if (!alerts.length) {
+      tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--green);padding:10px">✓ No critical stockout alerts in the next 7 days.</td></tr>';
+    } else {
+      tb.innerHTML = alerts.map(function(r){
+        var urgencyColor = r.urgency.indexOf('Critical') >= 0 ? 'var(--red)' :
+                           r.urgency.indexOf('Risk') >= 0 ? 'var(--orange)' :
+                           'var(--text)';
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(r.item_name) + '</strong></td>' +
+          '<td>' + brandShort(r.brand||'') + '</td>' +
+          '<td style="text-align:right">' + fmtNum(r.inv_qty) + '</td>' +
+          '<td style="text-align:right">' + r.drr_30d.toFixed(1) + '/d</td>' +
+          '<td style="text-align:right;color:' + urgencyColor + '"><strong>' +
+            (r.days_to_oos != null ? r.days_to_oos.toFixed(1) + 'd' : '—') + '</strong></td>' +
+          '<td><span style="color:' + urgencyColor + '">' + r.urgency + '</span></td>' +
+          '<td style="text-align:right">' + fmtINR(r.projected_lost_gmv_7d) + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+}
+
+// ─── V: Cannibalization ───────────────────────────────────────
+function renderC6Cannibalization() {
+  var card = document.getElementById('c6-v-card');
+  if (!D || !D.predictions || !D.predictions.cannibalization ||
+      !D.predictions.cannibalization.meta || !D.predictions.cannibalization.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var c = D.predictions.cannibalization;
+  var m = c.meta;
+  var s = c.summary || {};
+
+  var sub = document.getElementById('c6-v-sub');
+  if (sub) sub.textContent = m.skus_analyzed + ' SKUs · ' + m.pairs_computed + ' pairs computed';
+
+  var k = document.getElementById('c6-v-kpis');
+  if (k) {
+    var h = '';
+    h += _c6_tile('Strong Cannibals', fmtNum(s.strong_neg_count || 0), 'ρ < -0.4', 'var(--red)');
+    h += _c6_tile('Weak Cannibals', fmtNum(s.weak_neg_count || 0), '-0.4 ≤ ρ < -0.2', 'var(--orange)');
+    h += _c6_tile('Strong Complements', fmtNum(s.strong_pos_count || 0), 'ρ > +0.5', 'var(--green)');
+    h += _c6_tile('Weak Complements', fmtNum(s.weak_pos_count || 0), '0.3 < ρ ≤ +0.5', 'var(--accent)');
+    h += _c6_tile('Neutral Pairs', fmtNum(s.neutral_count || 0), 'independent', 'var(--text2)');
+    k.innerHTML = h;
+  }
+
+  var canTb = document.getElementById('c6-v-cannibals-tbody');
+  if (canTb) {
+    canTb.innerHTML = (c.strong_negative_pairs || []).map(function(p){
+      return '<tr>' +
+        '<td>' + escapeHtml((p.sku_a_name||'').slice(0,30)) + ' <span style="color:var(--text3)">' + brandShort(p.sku_a_brand||'') + '</span></td>' +
+        '<td>' + escapeHtml((p.sku_b_name||'').slice(0,30)) + ' <span style="color:var(--text3)">' + brandShort(p.sku_b_brand||'') + '</span></td>' +
+        '<td style="text-align:right;color:var(--red)"><strong>' + p.correlation.toFixed(2) + '</strong></td>' +
+        '</tr>';
+    }).join('');
+  }
+  var comTb = document.getElementById('c6-v-complements-tbody');
+  if (comTb) {
+    comTb.innerHTML = (c.strong_positive_pairs || []).map(function(p){
+      return '<tr>' +
+        '<td>' + escapeHtml((p.sku_a_name||'').slice(0,30)) + ' <span style="color:var(--text3)">' + brandShort(p.sku_a_brand||'') + '</span></td>' +
+        '<td>' + escapeHtml((p.sku_b_name||'').slice(0,30)) + ' <span style="color:var(--text3)">' + brandShort(p.sku_b_brand||'') + '</span></td>' +
+        '<td style="text-align:right;color:var(--green)"><strong>+' + p.correlation.toFixed(2) + '</strong></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  var db = document.getElementById('c6-v-drill-body');
+  if (db) {
+    var rows = (c.per_sku_top_cannibals || []).slice(0, 20);
+    if (!rows.length) {
+      db.innerHTML = '<div style="color:var(--text3);padding:8px">No cannibalization signals detected.</div>';
+    } else {
+      db.innerHTML = rows.map(function(r){
+        var canList = (r.cannibals||[]).map(function(c_){
+          return '<tr><td style="padding-left:18px;color:var(--text2)">↳ ' +
+            escapeHtml(c_.other_item_name.slice(0,40)) + ' <span style="color:var(--text3)">' + brandShort(c_.other_brand||'') + '</span></td>' +
+            '<td style="text-align:right;color:var(--red)">' + c_.correlation.toFixed(2) + '</td></tr>';
+        }).join('');
+        return '<div style="margin-bottom:10px">' +
+          '<div style="font-weight:600;padding:4px 0">' +
+            escapeHtml(r.item_name.slice(0,50)) +
+            ' <span style="color:var(--text3);font-size:11px">' + brandShort(r.brand||'') + '</span></div>' +
+          '<table style="font-size:11px"><tbody>' + canList + '</tbody></table>' +
+          '</div>';
+      }).join('');
+    }
+  }
+}
+
+// ─── W: Elasticity ────────────────────────────────────────────
+function renderC6Elasticity() {
+  var card = document.getElementById('c6-w-card');
+  if (!D || !D.predictions || !D.predictions.elasticity ||
+      !D.predictions.elasticity.meta || !D.predictions.elasticity.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var el = D.predictions.elasticity;
+  var sub = document.getElementById('c6-w-sub');
+  if (sub) sub.textContent = el.meta.row_count + ' rows · ' + el.meta.sku_count + ' SKUs measured';
+
+  var k = document.getElementById('c6-w-kpis');
+  if (k) {
+    var h = '';
+    var buckets = el.summary.blended_buckets || [];
+    buckets.forEach(function(b){
+      if (b.total_units > 0) {
+        h += _c6_tile(b.bucket, fmtNum(b.total_units) + 'u', fmtINR(b.total_gmv), 'var(--text)');
+      }
+    });
+    k.innerHTML = h || '<div style="color:var(--text3);padding:8px">No discount data — discount patch may not be applied.</div>';
+  }
+
+  // Per-brand
+  var bb = document.getElementById('c6-w-brand-body');
+  if (bb) {
+    bb.innerHTML = (el.by_brand || []).map(function(b){
+      var bucketCells = b.buckets.map(function(r){
+        var color = r.lift_vs_baseline_pct > 0 ? 'var(--green)' : 'var(--text2)';
+        return '<td style="text-align:right;font-size:11px">' +
+          '<div style="font-weight:600">' + r.units_per_day.toFixed(0) + 'u/d</div>' +
+          '<div style="color:' + color + ';font-size:10px">' + (r.lift_vs_baseline_pct > 0 ? '+' : '') + r.lift_vs_baseline_pct.toFixed(0) + '%</div>' +
+          '</td>';
+      }).join('');
+      var liftColor = b.implied_lift_per_pct > 1 ? 'var(--green)' : b.implied_lift_per_pct > 0 ? 'var(--accent)' : 'var(--orange)';
+      return '<div style="margin-bottom:14px;padding:8px;border:1px solid var(--border);border-radius:6px">' +
+        '<div style="font-weight:600;margin-bottom:6px">' +
+        '<strong>' + escapeHtml(b.brand) + '</strong> · ' +
+        fmtNum(b.total_units) + ' units · ' + fmtINR(b.total_gmv) +
+        ' · <span style="color:' + liftColor + '">Implied lift/%disc: ' +
+        (b.implied_lift_per_pct > 0 ? '+' : '') + b.implied_lift_per_pct.toFixed(1) + '%</span></div>' +
+        '<table style="font-size:11px">' +
+        '<thead><tr><th></th>' + b.buckets.map(function(r){return '<th style="text-align:right">' + r.bucket + '</th>';}).join('') + '</tr></thead>' +
+        '<tbody><tr><td style="color:var(--text2)">units/day · lift</td>' + bucketCells + '</tr></tbody>' +
+        '</table></div>';
+    }).join('');
+  }
+
+  var et = document.getElementById('c6-w-elastic-tbody');
+  if (et) {
+    et.innerHTML = (el.most_elastic_skus || []).map(function(r){
+      return '<tr>' +
+        '<td>' + escapeHtml(r.item_name.slice(0,30)) + '</td>' +
+        '<td>' + brandShort(r.brand||'') + '</td>' +
+        '<td style="text-align:right;color:var(--green)"><strong>+' + r.lift_per_pct_discount.toFixed(1) + '%</strong></td>' +
+        '</tr>';
+    }).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:6px">No data</td></tr>';
+  }
+  var ie = document.getElementById('c6-w-inelastic-tbody');
+  if (ie) {
+    ie.innerHTML = (el.least_elastic_skus || []).map(function(r){
+      var color = r.lift_per_pct_discount < 0 ? 'var(--red)' : 'var(--text)';
+      return '<tr>' +
+        '<td>' + escapeHtml(r.item_name.slice(0,30)) + '</td>' +
+        '<td>' + brandShort(r.brand||'') + '</td>' +
+        '<td style="text-align:right;color:' + color + '"><strong>' + r.lift_per_pct_discount.toFixed(1) + '%</strong></td>' +
+        '</tr>';
+    }).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:6px">No data</td></tr>';
+  }
+}
+
+// ─── X: Geo Pricing ───────────────────────────────────────────
+function renderC6GeoPricing() {
+  var card = document.getElementById('c6-x-card');
+  if (!D || !D.predictions || !D.predictions.geo_pricing ||
+      !D.predictions.geo_pricing.meta || !D.predictions.geo_pricing.meta.enabled) {
+    if (card) card.style.display = 'none'; return;
+  }
+  if (card) card.style.display = '';
+  var gp = D.predictions.geo_pricing;
+  var m = gp.meta;
+  var s = gp.summary || {};
+
+  var sub = document.getElementById('c6-x-sub');
+  if (sub) sub.textContent = m.city_count + ' cities · network median ₹' + (m.network_median_price||0).toFixed(0) + '/unit';
+
+  var k = document.getElementById('c6-x-kpis');
+  if (k) {
+    var h = '';
+    h += _c6_tile('Compliant', fmtNum(s.Compliant || 0), 'within ±15%', 'var(--green)');
+    h += _c6_tile('Overpriced', fmtNum(s.Overpriced || 0), '>15% above median', 'var(--orange)');
+    h += _c6_tile('Underpriced', fmtNum(s.Underpriced || 0), '>15% below median', 'var(--red)');
+    h += _c6_tile('Median Price', '₹' + (m.network_median_price||0).toFixed(0), 'per unit', 'var(--text)');
+    k.innerHTML = h;
+  }
+
+  var tb = document.getElementById('c6-x-outliers-tbody');
+  if (tb) {
+    var outliers = gp.outliers || [];
+    if (!outliers.length) {
+      tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--green);padding:10px">✓ All cities within ±15% of network median.</td></tr>';
+    } else {
+      tb.innerHTML = outliers.map(function(r){
+        var color = r.compliance === 'Overpriced' ? 'var(--orange)' : 'var(--red)';
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(r.city) + '</strong></td>' +
+          '<td>' + (r.month||'') + '</td>' +
+          '<td style="text-align:right">' + fmtNum(r.units) + '</td>' +
+          '<td style="text-align:right">' + fmtINR(r.gmv) + '</td>' +
+          '<td style="text-align:right">₹' + r.per_unit_price.toFixed(0) + '</td>' +
+          '<td style="text-align:right;color:' + color + '"><strong>' + (r.deviation_pct > 0 ? '+' : '') + r.deviation_pct.toFixed(1) + '%</strong></td>' +
+          '<td><span style="color:' + color + '">' + r.compliance + '</span></td>' +
+          '</tr>';
+      }).join('');
+    }
+  }
+}
+
+function renderCluster6() {
+  try { renderC6Stockout(); } catch(e) { console.error('c6 stockout:', e); }
+  try { renderC6Cannibalization(); } catch(e) { console.error('c6 canniabal:', e); }
+  try { renderC6Elasticity(); } catch(e) { console.error('c6 elasticity:', e); }
+  try { renderC6GeoPricing(); } catch(e) { console.error('c6 geo pricing:', e); }
+}
+
+(function() {
+  var attempts = 0;
+  var timer = setInterval(function(){
+    attempts++;
+    if (typeof D !== 'undefined' && D && D.predictions) {
+      clearInterval(timer);
+      renderCluster6();
+    }
+    if (attempts > 30) { clearInterval(timer); }
+  }, 500);
 })();
 
 </script>
